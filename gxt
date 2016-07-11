@@ -3,6 +3,10 @@
 
 REPO=~/.notes
 
+_version(){
+	echo "gxt \"Xnote Git\" version 1.0"
+}
+
 _help(){
 	echo -e "What is this? \tgxt \"Xnote GiT\""
 	echo ""
@@ -107,9 +111,6 @@ _log(){
 	fi
 }
 
-if [ $# -eq 0 ]; then
-	_help
-fi
 cd $REPO
 case $1 in
 	add|edit|update|vi) _add $@;;
@@ -124,6 +125,8 @@ case $1 in
 
 	init)	_init ;;
 
-	help)	_help ;;
+	--version)	_version ;;
+
+	*|--help|--help)	_help ;;
 
 esac

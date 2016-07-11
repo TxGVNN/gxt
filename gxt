@@ -1,0 +1,127 @@
+#!/bin/bash
+REPO=~/.notes
+
+_help(){
+	echo -e "What is this? \tgtx \"Xnote GiT\""
+	echo ""
+	echo "commands are:"
+	echo -e "\tinit \tinit repo git for notes"
+	echo -e "\tadd \tAdd or update note |edit|vi|update|"
+	echo -e "\tlist \tAdd or update note |ls|"
+	echo -e "\tfind \tfind name note or content contain pattern |search|"
+	echo -e "\tview \tview content contain pattern |show|cat|less|more|"
+	echo -e "\tlog \tlog all or one note"
+	echo ""
+	exit
+}
+
+_init(){
+	if [ ! -d "$REPO/.git" ]; then
+		git init $REPO
+	else
+		echo "repo has exits"
+	fi
+}
+
+_add(){
+	if [ $# -eq 2 ];then
+		msg="Add $2"
+		if [ -f $REPO/$1 ]; then
+			printf "Note \"$2\" has exist. Update (y/n)? "
+			read agree
+			if [ "$agree" == 'y' ]; then
+				editor $REPO/$1
+				msg="Update $2"
+			else
+				exit
+			fi
+		else
+			editor $REPO/$2
+		fi
+
+		if [[ $(git status -s | grep '??\|M') ]]; then
+			git add $2
+			git commit -m "$msg" | head -n1
+		fi
+	else
+		echo "gtx add <note-name>"
+		echo "gtx vi <note-name>"
+		echo "gtx edit <note-name>"
+		echo "gtx update <note-name>"
+	fi
+}
+
+_view(){
+	if [ $# -ne 2 ];then
+		echo "gtx cat <note-name>"
+		echo "gtx view <note-name>"
+		echo "gtx less <note-name>"
+		echo "gtx more <note-name>"
+	else
+		case $1 in
+			less)
+				if [ $# -eq 2 ];then
+					less $2
+				fi;;
+			more)
+				if [ $# -eq 2 ];then
+					more $2
+				fi;;
+			*)
+				if [ $# -eq 2 ];then
+					cat $2
+				fi;;
+
+		esac
+	fi
+}
+
+_list(){
+	ls
+}
+
+_search(){
+
+	if [ $# -eq 2 ] && [ "$2" != '--' ]; then
+		find . -path ./.git -prune -o -type f -printf "%f\n" | grep $2 --color
+	else
+		if [ $# -eq 3 ] && [ "$2" == '--' ]; then
+			find .  -path ./.git -prune -o -type f -exec grep $3 {} --color -Hn \; #|  sed -e 's/\.\//\n/g'
+		else
+			echo "gtx find [<note-name>] [ -- <pattern>]"
+		fi
+	fi
+}
+
+_log(){
+	if [ $# -eq 1 ]; then
+		git log --graph --decorate --pretty=oneline --abbrev-commit
+	else
+		if [ $# -eq 2 ]; then
+			git  log --graph --decorate --pretty=oneline --abbrev-commit -- $2
+		else
+			echo "gtx log [note-name]"
+		fi
+	fi
+}
+
+if [ $# -eq 0 ]; then
+	_help
+fi
+cd $REPO
+case $1 in
+	add|edit|update|vi) _add $@;;
+
+	view|cat|less|more)	_view $@;;
+
+	list|ls)	_list $@ ;;
+
+	find|search)	_search $@ ;;
+
+	log)	_log $@ ;;
+
+	init)	_init ;;
+
+	help)	_help ;;
+
+esac

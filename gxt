@@ -111,6 +111,12 @@ _log(){
 	fi
 }
 
+if [ ! -d "$REPO/.git" ]; then
+	echo "Not exits repo!"
+	echo "RUN: gxt init"
+	exit
+fi
+
 cd $REPO
 case $1 in
 	add|edit|update|vi) _add $@;;

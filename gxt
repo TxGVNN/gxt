@@ -1,8 +1,10 @@
 #!/bin/bash
+# TxGVNN <txgvnn@gmail.com>
+
 REPO=~/.notes
 
 _help(){
-	echo -e "What is this? \tgtx \"Xnote GiT\""
+	echo -e "What is this? \tgxt \"Xnote GiT\""
 	echo ""
 	echo "commands are:"
 	echo -e "\tinit \tinit repo git for notes"
@@ -44,19 +46,19 @@ _add(){
 			git commit -m "$msg" | head -n1
 		fi
 	else
-		echo "gtx add <note-name>"
-		echo "gtx vi <note-name>"
-		echo "gtx edit <note-name>"
-		echo "gtx update <note-name>"
+		echo "gxt add <note-name>"
+		echo "gxt vi <note-name>"
+		echo "gxt edit <note-name>"
+		echo "gxt update <note-name>"
 	fi
 }
 
 _view(){
 	if [ $# -ne 2 ];then
-		echo "gtx cat <note-name>"
-		echo "gtx view <note-name>"
-		echo "gtx less <note-name>"
-		echo "gtx more <note-name>"
+		echo "gxt cat <note-name>"
+		echo "gxt view <note-name>"
+		echo "gxt less <note-name>"
+		echo "gxt more <note-name>"
 	else
 		case $1 in
 			less)
@@ -88,7 +90,7 @@ _search(){
 		if [ $# -eq 3 ] && [ "$2" == '--' ]; then
 			find .  -path ./.git -prune -o -type f -exec grep $3 {} --color -Hn \; #|  sed -e 's/\.\//\n/g'
 		else
-			echo "gtx find [<note-name>] [ -- <pattern>]"
+			echo "gxt find [<note-name>] [ -- <pattern>]"
 		fi
 	fi
 }
@@ -100,7 +102,7 @@ _log(){
 		if [ $# -eq 2 ]; then
 			git  log --graph --decorate --pretty=oneline --abbrev-commit -- $2
 		else
-			echo "gtx log [note-name]"
+			echo "gxt log [note-name]"
 		fi
 	fi
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 # TxGVNN <txgvnn@gmail.com>
-
 REPO=~/.notes
+DIR_WORK=`pwd`
 
 _version(){
 	echo "gxt \"Xnote Git\" version 1.0"
@@ -12,10 +12,11 @@ _help(){
 	echo ""
 	echo "commands are:"
 	echo -e "\tinit \tinit repo git for notes"
-	echo -e "\tadd \tAdd or update note |edit|vi|update|"
-	echo -e "\tlist \tAdd or update note |ls|"
+	echo -e "\tnew \tNew or update note |edit|vi|update|"
+	echo -e "\tadd \tAdd file to note"
+	echo -e "\tlist \tList all notes |ls|"
 	echo -e "\tfind \tfind name note or content contain pattern |search|"
-	echo -e "\tview \tview content contain pattern |show|cat|less|more|"
+	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
 	echo -e "\tlog \tlog all or one note"
 	echo ""
 	exit
@@ -25,11 +26,11 @@ _init(){
 	if [ ! -d "$REPO/.git" ]; then
 		git init $REPO
 	else
-		echo "repo has exits"
+		echo "Repo already exists"
 	fi
 }
 
-_add(){
+_new(){
 	if [ $# -eq 2 ];then
 		msg="Add $2"
 		if [ -f $REPO/$1 ]; then
@@ -50,11 +51,27 @@ _add(){
 			git commit -m "$msg" | head -n1
 		fi
 	else
-		echo "gxt add <note-name>"
+		echo "gxt new <note-name>"
 		echo "gxt vi <note-name>"
 		echo "gxt edit <note-name>"
 		echo "gxt update <note-name>"
 	fi
+}
+
+_add(){
+	if [ $# -ne 2 ];then
+		echo "gxt add <file>"
+	else
+		cp $DIR_WORK/$2 $REPO
+		if [[ $(git status -s | grep '??\|M') ]]; then
+			git add $2
+			git commit -m "Add file $2" | head -n1
+		else
+			echo "File already exists. No changed"
+		fi
+
+	fi
+
 }
 
 _view(){
@@ -112,14 +129,16 @@ _log(){
 }
 
 if [ ! -d "$REPO/.git" ]; then
-	echo "Not exits repo!"
+	echo "The repo does not exist repo!"
 	echo "RUN: gxt init"
 	exit
 fi
 
 cd $REPO
 case $1 in
-	add|edit|update|vi) _add $@;;
+	new|edit|update|vi) _new $@;;
+
+	add)	_add $@ ;;
 
 	view|cat|less|more)	_view $@;;
 

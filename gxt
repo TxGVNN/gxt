@@ -63,12 +63,17 @@ _add(){
 	if [ $# -ne 2 ];then
 		echo "gxt add <file>"
 	else
-		cp $DIR_WORK/$2 $REPO
-		if [[ $(git status -s | grep '??\|M') ]]; then
-			git add $2
-			git commit -m "Add file $2" | head -n1
+		notes=$(basename $2)
+		if [[ "$2" == /* ]]; then
+			cp $2 $REPO
 		else
-			echo "File already exists. No changed"
+			cp $DIR_WORK/$2 $REPO
+		fi
+		if [[ $(git status -s | grep '??\|M') ]]; then
+			git add $notes
+			git commit -m "Add file $notes" | head -n1
+		else
+			echo "File \"$notes\" already exists. No changed"
 		fi
 
 	fi

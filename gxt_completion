@@ -16,7 +16,7 @@ _gxt(){
         f*) COMPREPLY=( $( compgen -W 'find' -- $cur ) );;
         v*) COMPREPLY=( $( compgen -W 'view' -- $cur ) );;
         s*) COMPREPLY=( $( compgen -W 'share' -- $cur ) );;
-        *)  COMPREPLY=( $( compgen -W  '--help --version init add list search view log' -- $cur ) );;
+        *)  COMPREPLY=( $( compgen -W  '--help --version new add init list log find view share' -- $cur ) );;
     esac
 }
 complete -F _gxt gxt

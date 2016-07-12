@@ -1,14 +1,14 @@
 #!/bin/bash
 # TxGVNN <txgvnn@gmail.com>
 REPO=~/.notes
-DIR_WORK=`pwd`
+DIR_WORK=$(pwd -P)
 
 _version(){
-	echo "gxt \"Xnote Git\" version 1.0"
+	echo 'gxt "Xnote Git" version 1.0'
 }
 
 _help(){
-	echo -e "What is this? \tgxt \"Xnote GiT\""
+	echo -e 'What is this? \tgxt "Xnote GiT"'
 	echo ""
 	echo "commands are:"
 	echo -e "\tinit \tinit repo git for notes"
@@ -25,30 +25,30 @@ _help(){
 
 _init(){
 	if [ ! -d "$REPO/.git" ]; then
-		git init $REPO
+		git init "$REPO"
 	else
 		echo "Repo already exists"
 	fi
 }
 
 _new(){
-	if [ $# -eq 2 ];then
+	if [ "$#" -eq 2 ];then
 		msg="Add $2"
-		if [ -f $REPO/$1 ]; then
-			printf "Note \"$2\" has exist. Update (y/n)? "
-			read agree
-			if [ "$agree" == 'y' ]; then
-				editor $REPO/$1
+		if [ -f "$REPO/$1" ]; then
+			printf 'Note "%s" has exist. Update (y/n)? ' "$2"
+			read -r agree
+			if [ "$agree" = 'y' ]; then
+				editor "$REPO/$1"
 				msg="Update $2"
 			else
 				exit
 			fi
 		else
-			editor $REPO/$2
+			editor "$REPO/$2"
 		fi
 
-		if [[ $(git status -s | grep '??\|M') ]]; then
-			git add $2
+		if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
+			git add "$2"
 			git commit -m "$msg" | head -n1
 		fi
 	else
@@ -60,20 +60,20 @@ _new(){
 }
 
 _add(){
-	if [ $# -ne 2 ];then
+	if [ "$#" -ne 2 ];then
 		echo "gxt add <file>"
 	else
-		notes=$(basename $2)
+		notes=${2##*/}
 		if [[ "$2" == /* ]]; then
-			cp $2 $REPO
+			cp "$2" "$REPO"
 		else
-			cp $DIR_WORK/$2 $REPO
+			cp "$DIR_WORK/$2" "$REPO"
 		fi
-		if [[ $(git status -s | grep '??\|M') ]]; then
-			git add $notes
+		if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
+			git add "$notes"
 			git commit -m "Add file $notes" | head -n1
 		else
-			echo "File \"$notes\" already exists. No changed"
+			printf 'File "%s" already exists. No changed' "$notes"
 		fi
 
 	fi
@@ -81,7 +81,7 @@ _add(){
 }
 
 _view(){
-	if [ $# -ne 2 ];then
+	if [ "$#" -ne 2 ];then
 		echo "gxt cat <note-name>"
 		echo "gxt view <note-name>"
 		echo "gxt less <note-name>"
@@ -89,16 +89,16 @@ _view(){
 	else
 		case $1 in
 			less)
-				if [ $# -eq 2 ];then
-					less $2
+				if [ "$#" -eq 2 ];then
+					less "$2"
 				fi;;
 			more)
-				if [ $# -eq 2 ];then
-					more $2
+				if [ "$#" -eq 2 ];then
+					more "$2"
 				fi;;
 			*)
-				if [ $# -eq 2 ];then
-					cat $2
+				if [ "$#" -eq 2 ];then
+					cat "$2"
 				fi;;
 
 		esac
@@ -111,11 +111,11 @@ _list(){
 
 _search(){
 
-	if [ $# -eq 2 ] && [ "$2" != '--' ]; then
-		find . -path ./.git -prune -o -type f -printf "%f\n" | grep $2 --color
+	if [ "$#" -eq 2 ] && [ "$2" != '--' ]; then
+		find . -path ./.git -prune -o -type f -print0 | grep -z --color "$2"
 	else
-		if [ $# -eq 3 ] && [ "$2" == '--' ]; then
-			find .  -path ./.git -prune -o -type f -exec grep $3 {} --color -Hn \; #|  sed -e 's/\.\//\n/g'
+		if [ "$#" -eq 3 ] && [ "$2" == '--' ]; then
+			find .  -path ./.git -prune -o -type f -exec grep -n --color /dev/null "$3" {} + #|  sed -e 's/\.\//\n/g'
 		else
 			echo "gxt find [<note-name>] [ -- <pattern>]"
 		fi
@@ -123,11 +123,11 @@ _search(){
 }
 
 _log(){
-	if [ $# -eq 1 ]; then
+	if [ "$#" -eq 1 ]; then
 		git log --graph --decorate --pretty=oneline --abbrev-commit
 	else
-		if [ $# -eq 2 ]; then
-			git  log --graph --decorate --pretty=oneline --abbrev-commit -- $2
+		if [ "$#" -eq 2 ]; then
+			git  log --graph --decorate --pretty=oneline --abbrev-commit -- "$2"
 		else
 			echo "gxt log [note-name]"
 		fi
@@ -135,11 +135,11 @@ _log(){
 }
 
 _share(){
-	if [ $# -ne 2 ];then
+	if [ "$#" -ne 2 ];then
 		echo "gxt share <note-name>"
 	else
 		# can use pastebinit
-		cat $2 | nc termbin.com 9999
+		<"$2" nc termbin.com 9999
 	fi
 }
 
@@ -150,26 +150,26 @@ if [ ! -d "$REPO/.git" ]; then
 	exit
 fi
 
-cd $REPO
+cd "$REPO" || exit 1
+
 case $1 in
-	new|edit|update|vi) _new $@;;
+	new|edit|update|vi)	_new    "$@" ;;
 
-	add)	_add $@ ;;
+	               add)	_add    "$@" ;;
 
-	view|cat|less|more)	_view $@;;
+	view|cat|less|more)	_view   "$@" ;;
 
-	list|ls)	_list $@ ;;
+	           list|ls)	_list   "$@" ;;
 
-	find|search)	_search $@ ;;
+	       find|search)	_search "$@" ;;
 
-	share)	_share $@ ;;
+	             share)	_share  "$@" ;;
 
-	log)	_log $@ ;;
+	               log)	_log    "$@" ;;
 
-	init)	_init ;;
+	              init)	_init        ;;
 
-	--version)	_version ;;
+	         --version)	_version     ;;
 
-	*|--help|--help)	_help ;;
-
+	                 *)	_help        ;;
 esac

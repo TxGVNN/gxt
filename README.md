@@ -14,9 +14,13 @@ gxt init
 ```
 - Add new node or update note
 ```
-gxt add new-notes
+gxt new new-notes
 #OR
 gxt vi new-notes
+```
+- Add new note from file
+```
+gxt add <file_path>
 ```
 - View/cat/less/more note
 ```

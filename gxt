@@ -128,6 +128,16 @@ _log(){
 	fi
 }
 
+_share(){
+	if [ $# -ne 2 ];then
+		echo "gxt share <note-name>"
+	else
+		# can use pastebinit
+		cat $2 | nc termbin.com 9999
+	fi
+}
+
+
 if [ ! -d "$REPO/.git" ]; then
 	echo "The repo does not exist repo!"
 	echo "RUN: gxt init"
@@ -146,6 +156,8 @@ case $1 in
 
 	find|search)	_search $@ ;;
 
+	share)	_share $@ ;;
+	
 	log)	_log $@ ;;
 
 	init)	_init ;;

@@ -14,9 +14,10 @@ _help(){
 	echo -e "\tinit \tinit repo git for notes"
 	echo -e "\tnew \tNew or update note |edit|vi|update|"
 	echo -e "\tadd \tAdd file to note"
-	echo -e "\tlist \tList all notes |ls|"
 	echo -e "\tfind \tfind name note or content contain pattern |search|"
 	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
+	echo -e "\tshare \tshare note vi termbin.com"
+	echo -e "\tlist \tList all notes |ls|"
 	echo -e "\tlog \tlog all or one note"
 	echo ""
 	exit
@@ -157,7 +158,7 @@ case $1 in
 	find|search)	_search $@ ;;
 
 	share)	_share $@ ;;
-	
+
 	log)	_log $@ ;;
 
 	init)	_init ;;

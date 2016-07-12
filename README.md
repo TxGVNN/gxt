@@ -22,19 +22,19 @@ cp gxt_completion /etc/bash_completion.d/
 gxt init
 ```
 
-- Add new node or update note
+- Add new notes or update notes
 ```
 gxt new new-notes
 #OR
 gxt vi new-notes
 ```
 
-- Add new note from file
+- Add new notes from file
 ```
 gxt add <file_path>
 ```
 
-- View/cat/less/more note
+- View/cat/less/more notes
 ```
 gxt cat new-notes
 gxt less new-notes
@@ -52,13 +52,13 @@ gxt list
 gxt search name
 ```
 ```
-# search pattern in file content
+# search notes contains pattern
 gxt search -- pattern
 ```
 
-- Share node via [termbin.com](http://termbin.com)
+- Share notes via [termbin.com](http://termbin.com)
 ```
-gxt share example-note-A
+gxt share example-notes-A
 ```
 
 - Get log notes
@@ -67,6 +67,6 @@ gxt share example-note-A
 gxt log
 ```
 ```
-# log only name-node
-gxt log name-node
+# log only name-notes
+gxt log name-notes
 ```

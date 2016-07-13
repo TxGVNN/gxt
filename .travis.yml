@@ -1,0 +1,13 @@
+language: sh
+
+sudo: required
+
+before_install:
+  - sudo curl -Lso /usr/bin/shellcheck https://github.com/caarlos0/shellcheck-docker/releases/download/v0.4.4/shellcheck
+  - sudo chmod +x /usr/bin/shellcheck
+
+script:
+ - shellcheck -s bash gxt
+
+matrix:
+  fast_finish: true

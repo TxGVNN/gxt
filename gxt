@@ -11,7 +11,6 @@ _help(){
 	echo -e 'What is this? \tgxt "Xnote GiT"'
 	echo ""
 	echo "commands are:"
-	echo -e "\tinit \tinit repo git for notes"
 	echo -e "\tnew \tNew or update note |edit|vi|update|"
 	echo -e "\tadd \tAdd file to note"
 	echo -e "\tfind \tfind name note or content contain pattern |search|"
@@ -25,9 +24,7 @@ _help(){
 
 _init(){
 	if [ ! -d "$REPO/.git" ]; then
-		git init "$REPO"
-	else
-		echo "Repo already exists"
+		git init "$REPO" > /dev/null
 	fi
 }
 
@@ -112,10 +109,10 @@ _list(){
 _search(){
 
 	if [ "$#" -eq 2 ] && [ "$2" != '--' ]; then
-		find . -path ./.git -prune -o -type f -print0 | grep -z --color "$2"
+		find . -path ./.git -prune -o -type f -printf "%f\n" | grep --color "$2"
 	else
 		if [ "$#" -eq 3 ] && [ "$2" == '--' ]; then
-			find .  -path ./.git -prune -o -type f -exec grep -n --color /dev/null "$3" {} + #|  sed -e 's/\.\//\n/g'
+			find .  -path ./.git -prune -o -type f -exec grep -n --color "$3" {} + #|  sed -e 's/\.\//\n/g'
 		else
 			echo "gxt find [<note-name>] [ -- <pattern>]"
 		fi
@@ -143,12 +140,8 @@ _share(){
 	fi
 }
 
-
-if [ ! -d "$REPO/.git" ]; then
-	echo "The repo does not exist repo!"
-	echo "RUN: gxt init"
-	exit
-fi
+## __run__ ##
+_init
 
 cd "$REPO" || exit 1
 
@@ -166,8 +159,6 @@ case $1 in
 	             share)	_share  "$@" ;;
 
 	               log)	_log    "$@" ;;
-
-	              init)	_init        ;;
 
 	         --version)	_version     ;;
 

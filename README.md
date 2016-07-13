@@ -17,10 +17,6 @@ cp gxt /bin/
 cp gxt_completion /etc/bash_completion.d/
 ```
 ## How to use?
-- Init only repo for you
-```
-gxt init
-```
 
 - Add new notes or update notes
 ```

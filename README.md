@@ -1,5 +1,4 @@
-
-# Xnote GiT
+# Xnote GiT  ![build](https://travis-ci.org/TxGVNN/gxt.svg?branch=master)
 ## What is this?
 **Gxt "Xnote GiT" is Notes manager.**
 

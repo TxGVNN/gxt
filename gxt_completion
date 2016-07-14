@@ -13,10 +13,10 @@ _gxt(){
         a*) COMPREPLY=( $( compgen -W 'add' -- $cur ) );;
         i*) COMPREPLY=( $( compgen -W 'init' -- $cur ) );;
         l*) COMPREPLY=( $( compgen -W 'list log' -- $cur ) );;
-        f*) COMPREPLY=( $( compgen -W 'find' -- $cur ) );;
         v*) COMPREPLY=( $( compgen -W 'view' -- $cur ) );;
-        s*) COMPREPLY=( $( compgen -W 'share' -- $cur ) );;
-        *)  COMPREPLY=( $( compgen -W  '--help --version new add init list log find view share' -- $cur ) );;
+        r*) COMPREPLY=( $( compgen -W 'rm' -- $cur ) );;
+        s*) COMPREPLY=( $( compgen -W 'share search' -- $cur ) );;
+        *)  COMPREPLY=( $( compgen -W  '--help --version new add init list log view rm share search' -- $cur ) );;
     esac
 }
 complete -F _gxt gxt

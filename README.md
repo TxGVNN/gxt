@@ -56,6 +56,11 @@ gxt search -- pattern
 gxt share example-notes-A
 ```
 
+- Delete notes
+```
+gxt rm <name> ...
+```
+
 - Get log notes
 ```
 # all notes

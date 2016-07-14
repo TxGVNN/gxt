@@ -13,8 +13,9 @@ _help(){
 	echo "commands are:"
 	echo -e "\tnew \tNew or update note |edit|vi|update|"
 	echo -e "\tadd \tAdd file to note"
-	echo -e "\tfind \tfind name note or content contain pattern |search|"
+	echo -e "\tsearch \tsearch name note or content contain pattern |find|"
 	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
+	echo -e "\trm \tremove note |rm|delete|"
 	echo -e "\tshare \tshare note vi termbin.com"
 	echo -e "\tlist \tList all notes |ls|"
 	echo -e "\tlog \tlog all or one note"
@@ -66,7 +67,7 @@ _add(){
 		else
 			cp "$DIR_WORK/$2" "$REPO"
 		fi
-		if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
+		if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
 			git add "$notes"
 			git commit -m "Add file $notes" | head -n1
 		else
@@ -140,6 +141,30 @@ _share(){
 	fi
 }
 
+_remove(){
+	if [ "$#" -eq 1 ];then
+		echo "gxt rm <name-notes> ..."
+	else
+		item=""
+		shift
+		for note in $@
+		do
+			if [ -f "$note" ]; then
+				rm -vrf $note
+				item+="$note "
+			else
+				printf 'not found ‘%s’\n' "$note"
+			fi
+		done
+
+		if [ -n "$(git status -s | awk '/^ D/')" ]; then
+			git add -u
+			git commit -m "Delete $item" | head -n1
+		fi
+
+	fi
+
+}
 ## __run__ ##
 _init
 
@@ -157,6 +182,8 @@ case $1 in
 	       find|search)	_search "$@" ;;
 
 	             share)	_share  "$@" ;;
+
+	  rm|remove|delete)	_remove  "$@" ;;
 
 	               log)	_log    "$@" ;;
 

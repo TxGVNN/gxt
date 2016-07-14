@@ -110,7 +110,7 @@ _list(){
 _search(){
 
 	if [ "$#" -eq 2 ] && [ "$2" != '--' ]; then
-		find . -path ./.git -prune -o -type f -printf '%f\0' | grep -z --color=always "$2" | tr \\0 \\n
+		find . -path ./.git -prune -o -type f -printf '%f\0' | grep -zi --color=always "$2" | tr \\0 \\n
 	else
 		if [ "$#" -eq 3 ] && [ "$2" == '--' ]; then
 			find .  -path ./.git -prune -o -type f -exec grep -n --color=always "$3" /dev/null {} + | sed -e 's,\./,,'

@@ -9,6 +9,7 @@ I think it's very convenient for cmd user.
 Simple for use git to manage notes.
 
 You can use: new, find, view, share, log,... and many function from the power of git.
+[![asciicast](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb.png)](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb)
 
 ## How to install?
 ```

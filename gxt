@@ -147,13 +147,13 @@ _remove(){
 	else
 		item=""
 		shift
-		for note in $@
+		for note in "$@"
 		do
 			if [ -f "$note" ]; then
-				rm -vrf $note
+				rm -vrf "$note"
 				item+="$note "
 			else
-				printf 'not found ‘%s’\n' "$note"
+				printf 'not found %s\n' "$note"
 			fi
 		done
 

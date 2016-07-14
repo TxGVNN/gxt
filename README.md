@@ -19,9 +19,9 @@ cp gxt_completion /etc/bash_completion.d/
 
 - Add new notes or update notes
 ```
-gxt new new-notes
+gxt new <new-notes>
 #OR
-gxt vi new-notes
+gxt vi <new-notes>
 ```
 
 - Add new notes from file
@@ -31,9 +31,9 @@ gxt add <file_path>
 
 - View/cat/less/more notes
 ```
-gxt cat new-notes
-gxt less new-notes
-gxt more new-notes
+gxt cat <name-notes>
+gxt less <name-notes>
+gxt more <name-notes>
 ```
 
 - List notes
@@ -44,21 +44,21 @@ gxt list
 - Search notes
 ```
 # search as name
-gxt search name
+gxt search <name>
 ```
 ```
 # search notes contains pattern
-gxt search -- pattern
+gxt search -- <pattern>
 ```
 
 - Share notes via [termbin.com](http://termbin.com)
 ```
-gxt share example-notes-A
+gxt share <name-notes>
 ```
 
 - Delete notes
 ```
-gxt rm <name> ...
+gxt rm <name-notes> ...
 ```
 
 - Get log notes
@@ -68,5 +68,5 @@ gxt log
 ```
 ```
 # log only name-notes
-gxt log name-notes
+gxt log <name-notes>
 ```

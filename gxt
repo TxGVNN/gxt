@@ -15,6 +15,7 @@ _help(){
 	echo -e "\tadd \tAdd file to note"
 	echo -e "\tsearch \tsearch name note or content contain pattern |find|"
 	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
+	echo -e "\tmv \trename notes |rename|"
 	echo -e "\trm \tremove note |rm|delete|"
 	echo -e "\tshare \tshare note vi termbin.com"
 	echo -e "\tlist \tList all notes |ls|"
@@ -141,6 +142,20 @@ _share(){
 	fi
 }
 
+_move(){
+	if [ "$#" -ne 3 ] ;then
+		echo "gxt mv <old-notes> <new-notes>"
+	else
+		mv "$2" "$3"
+		if [ -n "$(git status -s | awk '/^ D/')" ]; then
+			git add -u
+			git add "$3"
+			git commit -m "Rename $2 -> $3" | head -n1
+		fi
+
+	fi
+}
+
 _remove(){
 	if [ "$#" -eq 1 ];then
 		echo "gxt rm <name-notes> ..."
@@ -163,8 +178,8 @@ _remove(){
 		fi
 
 	fi
-
 }
+
 ## __run__ ##
 _init
 
@@ -183,7 +198,9 @@ case $1 in
 
 	             share)	_share  "$@" ;;
 
-	  rm|remove|delete)	_remove  "$@" ;;
+			 mv|rename) _move	"$@" ;;
+
+	  rm|remove|delete)	_remove "$@" ;;
 
 	               log)	_log    "$@" ;;
 

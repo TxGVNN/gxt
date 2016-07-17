@@ -57,6 +57,11 @@ gxt search -- <pattern>
 gxt share <name-notes>
 ```
 
+- Rename notes
+```
+gxt mv <old-notes> <new-notes>
+```
+
 - Delete notes
 ```
 gxt rm <name-notes> ...

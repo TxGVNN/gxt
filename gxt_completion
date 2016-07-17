@@ -1,11 +1,12 @@
-#bash_completion
+#-*- mode: shell-script;-*-
+# bash_completion
 # TxGVNN <txgvnn@gmail.com>
 REPO=~/.notes
 
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    commands="--help --version new add init list log view rm share search"
+    commands="--help --version help new add init list log view rm mv share search"
 
     if [ $COMP_CWORD == 1 ]
     then

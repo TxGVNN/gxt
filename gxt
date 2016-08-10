@@ -33,11 +33,11 @@ _init(){
 _new(){
 	if [ "$#" -eq 2 ];then
 		msg="Add $2"
-		if [ -f "$REPO/$1" ]; then
-			printf 'Note "%s" has exist. Update (y/n)? ' "$2"
+		if [ -f "$REPO/$2" ]; then
+			printf 'Note "%s" has exist. Update (Y/n): ' "$2"
 			read -r agree
-			if [ "$agree" = 'y' ]; then
-				editor "$REPO/$1"
+			if [[ "$agree" = 'y' || -z "$agree" ]]; then
+				editor "$REPO/$2"
 				msg="Update $2"
 			else
 				exit

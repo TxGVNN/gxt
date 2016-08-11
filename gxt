@@ -59,15 +59,21 @@ _new(){
 }
 
 _add(){
-	if [ "$#" -ne 2 ];then
-		echo "gxt add <file>"
+	if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
+		echo "gxt add <file> [<new-note-name>]"
 	else
-		notes=${2##*/}
-		if [[ "$2" == /* ]]; then
-			cp "$2" "$REPO"
-		else
-			cp "$DIR_WORK/$2" "$REPO"
+
+		notes=$3
+		if [ -z "$3" ]; then
+			notes=${2##*/}
 		fi
+
+		if [[ "$2" == /* ]]; then
+			cp "$2" "$REPO/$notes"
+		else
+			cp "$DIR_WORK/$2" "$REPO/$notes"
+		fi
+
 		if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
 			git add "$notes"
 			git commit -m "Add file $notes" | head -n1

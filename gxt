@@ -32,26 +32,38 @@ _init(){
 
 _new(){
 	if [ "$#" -eq 2 ];then
-		msg="Add $2"
 		if [ -f "$REPO/$2" ]; then
 			printf 'Note "%s" has exist. Update (Y/n): ' "$2"
 			read -r agree
 			if [[ "$agree" = 'y' || -z "$agree" ]]; then
-				editor "$REPO/$2"
-				msg="Update $2"
-			else
-				exit
+				_edit "$@"
 			fi
+			exit
 		else
 			editor "$REPO/$2"
 		fi
 
 		if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
 			git add "$2"
-			git commit -m "$msg" | head -n1
+			git commit -m "Add $2" | head -n1
 		fi
 	else
 		echo "gxt new <note-name>"
+		echo "gxt vi <note-name>"
+	fi
+}
+
+_edit(){
+	if [ "$#" -eq 2 ];then
+		if [ -f "$REPO/$2" ]; then
+			editor "$REPO/$2"
+			if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
+				git add "$2"
+				git commit -m "Update $2" | head -n1
+			fi
+		fi
+
+	else
 		echo "gxt vi <note-name>"
 		echo "gxt edit <note-name>"
 		echo "gxt update <note-name>"
@@ -192,7 +204,9 @@ _init
 cd "$REPO" || exit 1
 
 case $1 in
-	new|edit|update|vi)	_new    "$@" ;;
+								 new)	_new    "$@" ;;
+
+      edit|update|vi)	_edit   "$@" ;;
 
 	               add)	_add    "$@" ;;
 

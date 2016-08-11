@@ -40,8 +40,13 @@ _new(){
 			fi
 			exit
 		else
+			if [[ "$2" == *[/]* ]]; then
+				dir=${2%/*}
+				mkdir -p "$REPO/$dir"
+			fi
 			editor "$REPO/$2"
 		fi
+
 
 		if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
 			git add "$2"
@@ -61,6 +66,8 @@ _edit(){
 				git add "$2"
 				git commit -m "Update $2" | head -n1
 			fi
+		else
+			printf 'Note "%s" not found' "$2"
 		fi
 
 	else
@@ -204,11 +211,11 @@ _init
 cd "$REPO" || exit 1
 
 case $1 in
-								 new)	_new    "$@" ;;
+		    new|vi)	_new    "$@" ;;
 
-      edit|update|vi)	_edit   "$@" ;;
+	       edit|update)	_edit   "$@" ;;
 
-	               add)	_add    "$@" ;;
+		       add)	_add    "$@" ;;
 
 	view|cat|less|more)	_view   "$@" ;;
 
@@ -218,7 +225,7 @@ case $1 in
 
 	             share)	_share  "$@" ;;
 
-			 mv|rename) _move	"$@" ;;
+		 mv|rename)      _move	"$@" ;;
 
 	  rm|remove|delete)	_remove "$@" ;;
 

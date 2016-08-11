@@ -27,14 +27,14 @@ gxt vi <new-notes>
 
 - Add new notes from file
 ```
-gxt add <file_path>
+gxt add <file_path> [<new-note-name>]
 ```
 
 - View/cat/less/more notes
 ```
-gxt cat <name-notes>
-gxt less <name-notes>
-gxt more <name-notes>
+gxt cat <note-name>
+gxt less <note-name>
+gxt more <note-name>
 ```
 
 - List notes
@@ -54,17 +54,17 @@ gxt search -- <pattern>
 
 - Share notes via [termbin.com](http://termbin.com)
 ```
-gxt share <name-notes>
+gxt share <note-name>
 ```
 
 - Rename notes
 ```
-gxt mv <old-notes> <new-notes>
+gxt mv <old-note> <new-note>
 ```
 
 - Delete notes
 ```
-gxt rm <name-notes> ...
+gxt rm <note-name> ...
 ```
 
 - Get log notes
@@ -73,6 +73,6 @@ gxt rm <name-notes> ...
 gxt log
 ```
 ```
-# log only name-notes
-gxt log <name-notes>
+# log only note-name
+gxt log <note-name>
 ```

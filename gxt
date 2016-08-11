@@ -13,13 +13,13 @@ _help(){
 	echo "commands are:"
 	echo -e "\tnew \tNew or update note |edit|vi|update|"
 	echo -e "\tadd \tAdd file to note"
-	echo -e "\tsearch \tsearch name note or content contain pattern |find|"
+	echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
 	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
-	echo -e "\tmv \trename notes |rename|"
-	echo -e "\trm \tremove note |rm|delete|"
+	echo -e "\tmv \trename note |rename|"
+	echo -e "\trm \tremove notes |rm|delete|"
 	echo -e "\tshare \tshare note vi termbin.com"
 	echo -e "\tlist \tList all notes |ls|"
-	echo -e "\tlog \tlog all or one note"
+	echo -e "\tlog \tlog all or only note"
 	echo ""
 	exit
 }
@@ -60,7 +60,7 @@ _new(){
 
 _add(){
 	if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
-		echo "gxt add <file> [<new-note-name>]"
+		echo "gxt add <file> [<new-note-name]"
 	else
 
 		notes=$3
@@ -78,7 +78,7 @@ _add(){
 			git add "$notes"
 			git commit -m "Add file $notes" | head -n1
 		else
-			printf 'File "%s" already exists. No changed' "$notes"
+			printf 'Note "%s" already exists. No changed' "$notes"
 		fi
 
 	fi

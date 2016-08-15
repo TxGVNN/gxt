@@ -28,6 +28,11 @@ _gxt(){
                 return 0
                 ;;
 
+            "list"|"ls")
+                local box_list=$(find $REPO -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+                COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
+                return 0
+                ;;
             *)  ;;
         esac
     fi

@@ -6,7 +6,7 @@ REPO=~/.notes
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    commands="--help --version help new add init list log view rm mv share search"
+    commands="--help --version help new add init list log vi rm mv share search"
 
     if [ $COMP_CWORD == 1 ]
     then
@@ -16,7 +16,7 @@ _gxt(){
 
     if [ $COMP_CWORD == 2 ]; then
         case "$prev" in
-            "vi"|"view"|"cat"|"view"|"more"|"less"|"rm"|"delete"|"log"|"share"|"mv")
+            "vi"|"cat"|"more"|"less"|"rm"|"delete"|"log"|"share"|"mv")
                 local box_list=$(find $REPO -mindepth 1 -maxdepth 1 -type f -exec basename {} \;)
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0

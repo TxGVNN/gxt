@@ -14,7 +14,7 @@ _help(){
 	echo -e "\tnew \tNew or update note |edit|vi|update|"
 	echo -e "\tadd \tAdd file to note"
 	echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
-	echo -e "\tview \tview note contain pattern |show|cat|less|more|"
+	echo -e "\tcat \tview note |cat|less|more|"
 	echo -e "\tmv \trename note |rename|"
 	echo -e "\trm \tremove notes |rm|delete|"
 	echo -e "\tshare \tshare note vi termbin.com"
@@ -107,7 +107,6 @@ _add(){
 _view(){
 	if [ "$#" -ne 2 ];then
 		echo "gxt cat <note-name>"
-		echo "gxt view <note-name>"
 		echo "gxt less <note-name>"
 		echo "gxt more <note-name>"
 	else
@@ -130,6 +129,10 @@ _view(){
 }
 
 _list(){
+	echo "- CATEGORIES"
+	ls -d */
+	echo ""
+	echo "- GLOBAL"
 	ls
 }
 
@@ -217,7 +220,7 @@ case $1 in
 
 		       add)	_add    "$@" ;;
 
-	view|cat|less|more)	_view   "$@" ;;
+	     cat|less|more)	_view   "$@" ;;
 
 	           list|ls)	_list   "$@" ;;
 

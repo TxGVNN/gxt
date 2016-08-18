@@ -86,6 +86,11 @@ _add(){
 		if [ -z "$3" ]; then
 			notes=${2##*/}
 		fi
+		#if need to create new directory
+		if [[ "$3" == *[/]* ]]; then
+			dir=${3%/*}
+			mkdir -p "$REPO/$dir"
+		fi
 
 		if [[ "$2" == /* ]]; then
 			cp "$2" "$REPO/$notes"

@@ -6,7 +6,7 @@ REPO=~/.notes
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    commands="--help --version help new add init list log vi rm mv share search"
+    commands="--help --version help new add init list log vi rm mv share search export"
 
     if [ $COMP_CWORD == 1 ]
     then
@@ -16,7 +16,7 @@ _gxt(){
 
     if [ $COMP_CWORD == 2 ]; then
         case "$prev" in
-            "vi"|"cat"|"more"|"less"|"rm"|"delete"|"log"|"share"|"mv")
+            "vi"|"cat"|"more"|"less"|"rm"|"delete"|"log"|"share"|"mv"|"export")
                 local box_list=$(find $REPO  -path "*.git" -prune  -o  -print | sed 's,'"$HOME/.notes/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
@@ -29,7 +29,7 @@ _gxt(){
                 ;;
 
             "list"|"ls")
-                local box_list=$(find $REPO  -path "*.git" -prune  -o  -print | sed 's,'"$HOME/.notes/"',,g')
+                local box_list=$(find $REPO  -path "*.git" -prune  -o -type d  -print | sed 's,'"$HOME/.notes/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
                 ;;

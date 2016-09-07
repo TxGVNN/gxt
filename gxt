@@ -17,6 +17,7 @@ _help(){
 	echo -e "\tcat \tview note |cat|less|more|"
 	echo -e "\tmv \trename note |rename|"
 	echo -e "\trm \tremove notes |rm|delete|"
+	echo -e "\texport \texport note to file"
 	echo -e "\tshare \tshare note vi termbin.com"
 	echo -e "\tlist \tList all notes |ls|"
 	echo -e "\tlog \tlog all or only note"
@@ -213,6 +214,23 @@ _remove(){
 	fi
 }
 
+_export(){
+	if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
+		echo "gxt export <name-notes> [PATH]"
+	else
+		path=$3
+		if [ -z "$path" ]; then
+			path="$DIR_WORK"
+		fi
+		if [[ "$3" != /* ]]; then
+			path="$DIR_WORK/$3"
+		fi
+
+		cp "$REPO/$2" "$path" -i
+	fi
+
+}
+
 ## __run__ ##
 _init
 
@@ -230,6 +248,8 @@ case $1 in
 	           list|ls)	_list   "$@" ;;
 
 	       find|search)	_search "$@" ;;
+
+             export)	_export  "$@" ;;
 
 	             share)	_share  "$@" ;;
 

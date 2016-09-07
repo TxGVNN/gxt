@@ -52,6 +52,11 @@ gxt search <name>
 gxt search -- <pattern>
 ```
 
+- Export note to file 
+```
+gxt export <note-name> [path|file-name]
+```
+
 - Share notes via [termbin.com](http://termbin.com)
 ```
 gxt share <note-name>

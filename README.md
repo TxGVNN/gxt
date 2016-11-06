@@ -45,11 +45,11 @@ gxt list
 - Search notes
 ```
 # search as name
-gxt search <like-name> [-c catogary]
+gxt search <like-name> [-c category]
 ```
 ```
 # search notes contains pattern
-gxt search -- <pattern> [-c catogary]
+gxt search -- <pattern> [-c category]
 
 ```
 

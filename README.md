@@ -45,11 +45,12 @@ gxt list
 - Search notes
 ```
 # search as name
-gxt search <name>
+gxt search <like-name> [-c catogary]
 ```
 ```
 # search notes contains pattern
-gxt search -- <pattern>
+gxt search -- <pattern> [-c catogary]
+
 ```
 
 - Export note to file 

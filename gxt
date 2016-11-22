@@ -258,11 +258,11 @@ _view(){
 	cd "$REPO" || exit 1
 
 	case $1 in
-		new|vi)
+		new)
 			_new "$@"
 			;;
 
-		edit|update)
+		edit|update|vi)
 			_edit "$@"
 			;;
 

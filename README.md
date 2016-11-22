@@ -2,13 +2,13 @@
 ## What is this?
 **Gxt "Xnote GiT" is Notes manager.**
 
-Inspiration from the written notes are usually my days with git.
+Inspiration from the written notes is usually my days with git.
 
-I think it's very convenient for cmd user.
+I think it's very convenient for the command line lover.
 
 Simple for use git to manage notes.
 
-You can use: new, find, view, share, log,... and many function from the power of git.
+You can use: new, find, view, share, log,... and many functions from the power of git.
 [![asciicast](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb.png)](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb)
 
 ## How to install?

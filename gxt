@@ -34,11 +34,7 @@ _init(){
 _new(){
 	if [ "$#" -eq 2 ];then
 		if [ -f "$REPO/$2" ]; then
-			printf 'Note "%s" has exist. Update (Y/n): ' "$2"
-			read -r agree
-			if [[ "$agree" = 'y' || -z "$agree" ]]; then
-				_edit "$@"
-			fi
+			_edit "$@"
 			exit
 		else
 			if [[ "$2" == *[/]* ]]; then
@@ -258,11 +254,11 @@ _view(){
 	cd "$REPO" || exit 1
 
 	case $1 in
-		new)
+		new|vi)
 			_new "$@"
 			;;
 
-		edit|update|vi)
+		edit|update)
 			_edit "$@"
 			;;
 

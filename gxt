@@ -103,7 +103,6 @@ _add(){
 		fi
 
 	fi
-
 }
 
 _view(){
@@ -114,196 +113,197 @@ _view(){
 	else
 		case $1 in
 			less)
-				if [ "$#" -eq 2 ];then
-					less "$2"
-				fi;;
+				less "$2"
+				;;
 			more)
-				if [ "$#" -eq 2 ];then
-					more "$2"
-				fi;;
+				more "$2"
+				;;
 			*)
-				if [ "$#" -eq 2 ];then
-					cat "$2"
-				fi;;
+				cat "$2"
+				;;
+		esac
+	fi
+}
 
-			esac
+_list(){
+	echo "# CATEGORIES"
+	find "./$2" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
+	echo ""
+	echo "# GLOBAL"
+	ls -F "./$2"
+}
+
+_search(){
+	content='';
+	dir='.'
+	while [[ $# -gt 0 ]]
+	do
+		key="$1"
+		case $key in
+			-c|--category)
+				dir="$2"
+				shift # past argument
+				;;
+			-h|--help)
+				echo "gxt find [-c category] [<like-name>] [ -- <pattern>]"
+				exit
+				;;
+			--)
+				content="0";
+				;;
+			*)
+				value="$1"
+				;;
+		esac
+		shift # past argument or value
+	done
+	[ -z "$value" ] && _search -h
+
+	if [ -n "$content" ] ; then
+		find "$dir"  -path ./.git -prune -o -type f -exec grep -n --color=always "$value" /dev/null {} + | sed -e 's,\./,,'
+	else
+		find "$dir" -path ./.git -prune -o -type f -printf '%P\0'  | grep -zi --color=always "$value" | tr \\0 \\n
+	fi
+
+}
+
+_log(){
+	if [ "$#" -eq 1 ]; then
+		git log --graph --decorate --pretty=oneline --abbrev-commit
+	else
+		if [ "$#" -eq 2 ]; then
+			git  log --graph --decorate --pretty=oneline --abbrev-commit -- "$2"
+		else
+			echo "gxt log [note-name]"
 		fi
-	}
+	fi
+}
 
-	_list(){
-		echo "- CATEGORIES"
-		find "./$2" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
-		echo ""
-		echo "- GLOBAL"
-		ls -F "./$2"
-	}
+_share(){
+	if [ "$#" -ne 2 ];then
+		echo "gxt share <note-name>"
+	else
+		# can use pastebinit
+		<"$2" nc termbin.com 9999
+	fi
+}
 
-	_search(){
-		content='';
-		dir='.'
-		while [[ $# -gt 0 ]]
+_move(){
+	if [ "$#" -ne 3 ] ;then
+		echo "gxt mv <old-notes> <new-notes>"
+	else
+		if [[ "$3" == *[/]* ]]; then
+			dir=${3%/*}
+			mkdir -p "$REPO/$dir"
+		fi
+		mv "$2" "$3"
+		if [ -n "$(git status -s | awk '/^ D/')" ]; then
+			git add -u
+			git add "$3"
+			git commit -m "Rename $2 -> $3" | head -n1
+			git push origin master
+		fi
+
+	fi
+}
+
+_remove(){
+	if [ "$#" -eq 1 ];then
+		echo "gxt rm <name-notes> ..."
+	else
+		item=""
+		shift
+		for note in "$@"
 		do
-			key="$1"
-			case $key in
-				-c|--category)
-					dir="$2"
-					shift # past argument
-					;;
-				-h|--help)
-					echo "gxt find [-c category] [<like-name>] [ -- <pattern>]"
-					exit
-					;;
-				--)
-					content="0";
-					;;
-				*)
-					value="$1"
-					;;
-			esac
-			shift # past argument or value
-		done
-		[ -z "$value" ] && _search -h
-
-		if [ -n "$content" ] ; then
-			find "$dir"  -path ./.git -prune -o -type f -exec grep -n --color=always "$value" /dev/null {} + | sed -e 's,\./,,'
-		else
-			find "$dir" -path ./.git -prune -o -type f -printf '%P\0'  | grep -zi --color=always "$value" | tr \\0 \\n
-		fi
-
-	}
-
-	_log(){
-		if [ "$#" -eq 1 ]; then
-			git log --graph --decorate --pretty=oneline --abbrev-commit
-		else
-			if [ "$#" -eq 2 ]; then
-				git  log --graph --decorate --pretty=oneline --abbrev-commit -- "$2"
+			if [ -f "$note" ]; then
+				rm -vrf "$note"
+				item+="$note "
 			else
-				echo "gxt log [note-name]"
+				printf 'not found %s\n' "$note"
 			fi
-		fi
-	}
+		done
 
-	_share(){
-		if [ "$#" -ne 2 ];then
-			echo "gxt share <note-name>"
-		else
-			# can use pastebinit
-			<"$2" nc termbin.com 9999
-		fi
-	}
-
-	_move(){
-		if [ "$#" -ne 3 ] ;then
-			echo "gxt mv <old-notes> <new-notes>"
-		else
-			mv "$2" "$3"
-			if [ -n "$(git status -s | awk '/^ D/')" ]; then
-				git add -u
-				git add "$3"
-				git commit -m "Rename $2 -> $3" | head -n1
-			fi
-
-		fi
-	}
-
-	_remove(){
-		if [ "$#" -eq 1 ];then
-			echo "gxt rm <name-notes> ..."
-		else
-			item=""
-			shift
-			for note in "$@"
-			do
-				if [ -f "$note" ]; then
-					rm -vrf "$note"
-					item+="$note "
-				else
-					printf 'not found %s\n' "$note"
-				fi
-			done
-
-			if [ -n "$(git status -s | awk '/^ D/')" ]; then
-				git add -u
-				git commit -m "Delete $item" | head -n1
-			fi
-
-		fi
-	}
-
-	_export(){
-		if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
-			echo "gxt export <name-notes> [PATH]"
-		else
-			path=$3
-			if [ -z "$path" ]; then
-				path="$DIR_WORK"
-			fi
-			if [[ "$3" != /* ]]; then
-				path="$DIR_WORK/$3"
-			fi
-
-			cp "$REPO/$2" "$path" -i
+		if [ -n "$(git status -s | awk '/^ D/')" ]; then
+			git add -u
+			git commit -m "Delete $item" | head -n1
 		fi
 
-	}
+	fi
+}
 
-	## __run__ ##
-	_init
+_export(){
+	if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
+		echo "gxt export <name-notes> [PATH]"
+	else
+		path=$3
+		if [ -z "$path" ]; then
+			path="$DIR_WORK"
+		fi
+		if [[ "$3" != /* ]]; then
+			path="$DIR_WORK/$3"
+		fi
 
-	cd "$REPO" || exit 1
+		cp "$REPO/$2" "$path" -i
+	fi
 
-	case $1 in
-		new|vi)
-			_new "$@"
-			;;
+}
 
-		edit|update)
-			_edit "$@"
-			;;
+## __RUN__ ##
+_init
 
-		add)
-			_add "$@"
-			;;
+cd "$REPO" || exit 1
 
-		cat|less|more)
-			_view "$@"
-			;;
+case $1 in
+	new|vi)
+		_new "$@"
+		;;
 
-		list|ls)
-			_list "$@"
-			;;
+	edit|update)
+		_edit "$@"
+		;;
 
-		find|search)
-			shift
-			_search "$@"
-			;;
+	add)
+		_add "$@"
+		;;
 
-		export)
-			_export "$@"
-			;;
+	cat|less|more)
+		_view "$@"
+		;;
 
-		share)
-			_share "$@"
-			;;
+	list|ls)
+		_list "$@"
+		;;
 
-		mv|rename)
-			_move "$@"
-			;;
+	find|search)
+		shift
+		_search "$@"
+		;;
 
-		rm|remove|delete)
-			_remove "$@"
-			;;
+	export)
+		_export "$@"
+		;;
 
-		log)
-			_log "$@"
-			;;
+	share)
+		_share "$@"
+		;;
 
-		--version)
-			_version
-			;;
+	mv|rename)
+		_move "$@"
+		;;
 
-		*)
-			_help
-			;;
-	esac
+	rm|remove|delete)
+		_remove "$@"
+		;;
+
+	log)
+		_log "$@"
+		;;
+
+	--version)
+		_version
+		;;
+
+	*)
+		_help
+		;;
+esac

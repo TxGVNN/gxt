@@ -15,6 +15,7 @@ _help(){
 	echo -e "\tadd \tAdd file to note"
 	echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
 	echo -e "\tcat \tview note |cat|less|more|"
+	echo -e "\tstat \tdisplay note status"
 	echo -e "\tmv \trename note |rename|"
 	echo -e "\trm \tremove notes |rm|delete|"
 	echo -e "\texport \texport note to file"
@@ -122,6 +123,14 @@ _view(){
 				cat "$2"
 				;;
 		esac
+	fi
+}
+
+_stat(){
+	if [ "$#" -ne 2 ];then
+		echo "gxt stat <note-name>"
+	else
+		stat "$2"
 	fi
 }
 
@@ -268,6 +277,10 @@ case $1 in
 
 	cat|less|more)
 		_view "$@"
+		;;
+
+	stat)
+		_stat "$@"
 		;;
 
 	list|ls)

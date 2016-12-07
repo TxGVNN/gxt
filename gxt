@@ -1,6 +1,8 @@
 #!/bin/bash
-# TxGVNN <txgvnn@gmail.com>
-REPO=~/.notes
+# Giap Tran <txgvnn@gmail.com>
+# github.com/TxGVNN/gxt
+
+REPO=~/.gxt
 DIR_WORK=$(pwd -P)
 
 _version(){

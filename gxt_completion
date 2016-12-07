@@ -1,7 +1,9 @@
 #-*- mode: shell-script;-*-
 # bash_completion
-# TxGVNN <txgvnn@gmail.com>
-REPO=~/.notes
+# Giap Tran <txgvnn@gmail.com>
+# github.com/TxGVNN/gxt
+
+REPO=$HOME/.gxt
 
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -17,7 +19,7 @@ _gxt(){
     if [ $COMP_CWORD == 2 ]; then
         case "$prev" in
             "vi"|"cat"|"more"|"less"|"stat"|"rm"|"delete"|"log"|"share"|"mv"|"export")
-                local box_list=$(find $REPO  -path "*.git" -prune  -o  -print | sed 's,'"$HOME/.notes/"',,g')
+                local box_list=$(find "$REPO/"  -path "*.git" -prune  -o  -print | sed 's,'"$REPO/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
                 ;;
@@ -29,7 +31,7 @@ _gxt(){
                 ;;
 
             "list"|"ls")
-                local box_list=$(find $REPO  -path "*.git" -prune  -o -type d  -print | sed 's,'"$HOME/.notes/"',,g')
+                local box_list=$(find $REPO  -path "*.git" -prune  -o -type d  -print | sed 's,'"$REPO/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
                 ;;

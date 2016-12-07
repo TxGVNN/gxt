@@ -81,6 +81,13 @@ _add(){
 	if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
 		echo "gxt add <file> [<new-note-name]"
 	else
+		if [ -f "$3" ]; then
+			echo "Note has exist. Do you want override that (y/N)?"
+			read -r override
+			if [[ "$override" != "y" && "$override" != "Y" ]]; then
+				exit 1
+			fi
+		fi
 
 		notes=$3
 		if [ -z "$3" ]; then
@@ -102,7 +109,7 @@ _add(){
 			git add "$notes"
 			git commit -m "Add file $notes" | head -n1
 		else
-			printf 'Note "%s" already exists. No changed' "$notes"
+			printf 'Note "%s" was not changed' "$notes"
 		fi
 
 	fi

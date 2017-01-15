@@ -39,7 +39,7 @@ gxt more <note-name>
 
 - List notes
 ```
-gxt list
+gxt list [category]
 ```
 
 - Search notes

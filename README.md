@@ -44,12 +44,12 @@ gxt list [category]
 
 - Search notes
 ```
-# search as name
-gxt search <like-name> [-c category]
+# find like as name
+gxt find <like-name> [-c category]
 ```
 ```
-# search notes contains pattern
-gxt search -- <pattern> [-c category]
+# find notes contains pattern
+gxt find -- <pattern> [-c category]
 
 ```
 
@@ -75,10 +75,7 @@ gxt rm <note-name> ...
 
 - Get log notes
 ```
-# all notes
-gxt log
+# all/special notes
+gxt log [note-name]
 ```
-```
-# log only note-name
-gxt log <note-name>
-```
+

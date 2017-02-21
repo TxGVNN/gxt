@@ -82,7 +82,7 @@ _add(){
 		echo "gxt add <file> [<new-note-name]"
 	else
 		if [ -f "$3" ]; then
-			echo "Note has exist. Do you want override that (y/N)?"
+			printf "Note has exist. Do you want override that (y/N)? "
 			read -r override
 			if [[ "$override" != "y" && "$override" != "Y" ]]; then
 				exit 1
@@ -148,7 +148,7 @@ _list(){
 	find "./$2" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
 	echo ""
 	echo "# GLOBAL"
-	ls -F "./$2"
+	ls -F "./$2" | grep -v /
 }
 
 _search(){

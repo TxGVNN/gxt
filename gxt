@@ -148,7 +148,7 @@ _list(){
 	find "./$2" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
 	echo ""
 	echo "# GLOBAL"
-	ls -F "./$2" | grep -v /
+	find "./$2" -mindepth 1 -maxdepth 1 -type f -exec basename {} \;
 }
 
 _search(){

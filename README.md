@@ -13,8 +13,7 @@ You can use: new, find, view, share, log,... and many functions from the power o
 
 ## How to install?
 ```
-cp gxt /bin/
-cp gxt_completion /etc/bash_completion.d/
+sudo make
 ```
 ## How to use?
 

@@ -84,8 +84,7 @@ _gpg_(){
 			if file "$SRC" | grep PGP -q; then
 				gpg --output "$GPG_TMP" --decrypt "$SRC"
 			else
-#				cp "$SRC" "$GPG_TMP"
-				return
+				cp "$SRC" "$GPG_TMP"
 			fi
 		fi
 		GPG_TEXT="$SRC"

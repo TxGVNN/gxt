@@ -61,7 +61,10 @@ gxt export <note-name> [path|file-name]
 ```
 gxt share <note-name>
 ```
-
+- Display notes status
+```
+gxt stat <note-name>
+```
 - Rename notes
 ```
 gxt mv <old-note> <new-note>

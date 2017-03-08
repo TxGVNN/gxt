@@ -75,24 +75,27 @@ _gpg_(){
 		echo "Please setup first: gxt gpg EMAIL|PUBKEYID"
 		exit 1
 	fi
-	# hook_close
-	if [ "$1" == "encrypt" ] && [ -f "$SRC" ]; then
-		gpg --yes --trust-model always --output "$GPG_TEXT" --encrypt --recipient "$RECIPIENT" "$SRC"
-		rm -rf "$SRC"
-		SRC="$GPG_TEXT"
-	fi
 	# hook_open
 	if [ "$1" == "decrypt" ]; then
 		if [ -z "$GPG_TMP" ]; then
 			GPG_TMP="$(mktemp -u -t .gxt-XXXXXX)"
 		fi
-		if [ -f "$SRC" ] && file "$SRC" | grep PGP -q; then
-			gpg --output "$GPG_TMP" --decrypt "$SRC"
-		else
-			cp "$SRC" "$GPG_TMP"
+		if [ -f "$SRC" ]; then
+			if file "$SRC" | grep PGP -q; then
+				gpg --output "$GPG_TMP" --decrypt "$SRC"
+			else
+#				cp "$SRC" "$GPG_TMP"
+				return
+			fi
 		fi
 		GPG_TEXT="$SRC"
 		SRC="$GPG_TMP"
+	fi
+	# hook_close
+	if [ "$1" == "encrypt" ] && [ -f "$SRC" ]; then
+		gpg --yes --trust-model always --output "$GPG_TEXT" --encrypt --recipient "$RECIPIENT" "$SRC"
+		rm -rf "$SRC"
+		SRC="$GPG_TEXT"
 	fi
 }
 

@@ -29,10 +29,11 @@ _help(){
 	echo -e "\tlog \tlog all or only note"
 	echo ""
 	echo "Options are:"
-	echo -e "\t-g, --gpg		Encrypt notes with GnuPG"
-	echo -e "\t-m, --match		Search with match pattern"
-	echo -e "\t-v, --version	Show the version"
-	echo -e "\t-h, --help		Show this guide"
+	echo -e "\t-g,	--gpg		Encrypt notes with GnuPG"
+	echo -e "\t-m,	--match		Search with match pattern"
+	echo -e "\t   	--termbin	Share via termbin"
+	echo -e "\t-v,	--version	Show the version"
+	echo -e "\t-h,	--help		Show this guide"
 	exit
 }
 
@@ -52,6 +53,7 @@ _bootstrap(){
 						help) HELP=0;;
 						version) VERSION=0;;
 						category) long="CATEGORY";;
+						termbin) SHARE="TERMBIN";;
 					esac;;
 			esac
 		else
@@ -277,8 +279,14 @@ _share(){
 		echo "gxt share NOTE [-g|--gpg]"
 	else
 		_hook_open
-		# can use pastebinit
-		<"$SRC" nc termbin.com 9999
+
+		case "$SHARE" in
+			"TERMBIN")
+				<"$SRC" nc termbin.com 9999 ;;
+			*)
+				curl --upload-file "$SRC" https://transfer.sh
+		esac
+
 		_hook_close
 	fi
 }

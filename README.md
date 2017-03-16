@@ -52,9 +52,9 @@ gxt export NOTE [PATH] [-g|--gpg]
 
 ```
 
-- Share notes via [termbin.com](http://termbin.com)
+- Share notes via [transfer.sh](transfer.sh)
 ```
-gxt share NOTE [-g|--gpg]
+gxt share NOTE [-g|--gpg] [--termbin]
 ```
 - Display notes status
 ```
@@ -82,6 +82,7 @@ gxt log [NOTE]
 - Support encrypted node by using GNUPG
 - Improved processing opts
 - Merge _new to edit function
+- Share via transfer.sh, termbin.com
 ```
 - v1.0
 ```

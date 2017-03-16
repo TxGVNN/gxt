@@ -46,7 +46,8 @@ _bootstrap(){
 				h)	HELP=0;;
 				v)	VERSION=0;;
 				c)	long="CATEGORY";;
-				m)	MATCH=0;
+				m)	MATCH=0; ;;
+				-)
 					case ${opt:2} in
 						help) HELP=0;;
 						version) VERSION=0;;
@@ -139,7 +140,7 @@ _gpg_setup(){
 }
 
 _edit(){
-	msg="Update "
+	msg="Update"
 	if [ ! "$SRC" ]; then
 		echo "gxt new NOTE [-g|--gpg]"
 		echo "gxt vi NOTE [-g|--gpg]"
@@ -150,7 +151,7 @@ _edit(){
 			dir=${SRC%/*}
 			mkdir -p "$dir"
 		fi
-		msg="Add "
+		msg="Add"
 	fi
 
 	_hook_open

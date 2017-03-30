@@ -84,11 +84,7 @@ _gpg_(){
 			GPG_TMP="$(mktemp -u -t .gxt-XXXXXX)"
 		fi
 		if [ -f "$SRC" ]; then
-			if file "$SRC" | grep PGP -q; then
-				gpg --output "$GPG_TMP" --decrypt "$SRC"
-			else
-				cp "$SRC" "$GPG_TMP"
-			fi
+			gpg --output "$GPG_TMP" --decrypt "$SRC"
 		fi
 		GPG_TEXT="$SRC"
 		SRC="$GPG_TMP"

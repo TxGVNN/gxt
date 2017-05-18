@@ -7,403 +7,403 @@ RC="$HOME/.gxtrc"
 DIR_WORK=$(pwd -P)
 
 _version(){
-	echo -e 'What is this? \tgxt "Xnote Git" 2.0'
+    echo -e 'What is this? \tgxt "Xnote Git" 2.0'
 }
 
 _help(){
-	_version
-	echo ""
-	echo "Usage: gxt COMMAND [OPTIONS] [ARGS..]"
-	echo ""
-	echo "Commands are:"
-	echo -e "\tnew \tNew or update note |edit|vi|update|"
-	echo -e "\tadd \tAdd file to note"
-	echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
-	echo -e "\tcat \tview note |cat|less|more|"
-	echo -e "\tstat \tdisplay note status"
-	echo -e "\tmv \trename note |rename|"
-	echo -e "\trm \tremove notes |rm|delete|"
-	echo -e "\texport \texport note to file"
-	echo -e "\tshare \tshare note vi termbin.com"
-	echo -e "\tlist \tList all notes |ls|"
-	echo -e "\tlog \tlog all or only note"
-	echo ""
-	echo "Options are:"
-	echo -e "\t-g,	--gpg		Encrypt notes with GnuPG"
-	echo -e "\t-m,	--match		Search with match pattern"
-	echo -e "\t   	--termbin	Share via termbin"
-	echo -e "\t-v,	--version	Show the version"
-	echo -e "\t-h,	--help		Show this guide"
-	exit
+    _version
+    echo ""
+    echo "Usage: gxt COMMAND [OPTIONS] [ARGS..]"
+    echo ""
+    echo "Commands are:"
+    echo -e "\tnew \tNew or update note |edit|vi|update|"
+    echo -e "\tadd \tAdd file to note"
+    echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
+    echo -e "\tcat \tview note |cat|less|more|"
+    echo -e "\tstat \tdisplay note status"
+    echo -e "\tmv \trename note |rename|"
+    echo -e "\trm \tremove notes |rm|delete|"
+    echo -e "\texport \texport note to file"
+    echo -e "\tshare \tshare note vi termbin.com"
+    echo -e "\tlist \tList all notes |ls|"
+    echo -e "\tlog \tlog all or only note"
+    echo ""
+    echo "Options are:"
+    echo -e "\t-g,	--gpg		Encrypt notes with GnuPG"
+    echo -e "\t-m,	--match		Search with match pattern"
+    echo -e "\t   	--termbin	Share via termbin"
+    echo -e "\t-v,	--version	Show the version"
+    echo -e "\t-h,	--help		Show this guide"
+    exit
 }
 
 _bootstrap(){
-	for opt in "$@"
-	do
-		if [[ "$opt" == [-]* ]]; then
-			long='';
-			case ${opt:1:1} in
-				g)	GPG=0 ;;
-				h)	HELP=0;;
-				v)	VERSION=0;;
-				c)	long="CATEGORY";;
-				m)	MATCH=0; ;;
-				-)
-					case ${opt:2} in
-						help) HELP=0;;
-						version) VERSION=0;;
-						category) long="CATEGORY";;
-						termbin) SHARE="TERMBIN";;
-					esac;;
-			esac
-		else
-			if [ "$long" ]; then
-				eval "$long"="$opt"
-			else
-				commands+="$IFS$opt"
-			fi
-		fi
-	done
+    for opt in "$@"
+    do
+	if [[ "$opt" == [-]* ]]; then
+	    long='';
+	    case ${opt:1:1} in
+		g)	GPG=0 ;;
+		h)	HELP=0;;
+		v)	VERSION=0;;
+		c)	long="CATEGORY";;
+		m)	MATCH=0; ;;
+		-)
+		    case ${opt:2} in
+			help) HELP=0;;
+			version) VERSION=0;;
+			category) long="CATEGORY";;
+			termbin) SHARE="TERMBIN";;
+		    esac;;
+	    esac
+	else
+	    if [ "$long" ]; then
+		eval "$long"="$opt"
+	    else
+		commands+="$IFS$opt"
+	    fi
+	fi
+    done
 
-	if [ "$VERSION" ]; then
-		_version
-		exit
-	fi
-	if [ "$HELP" ]; then
-		_help
-	fi
+    if [ "$VERSION" ]; then
+	_version
+	exit
+    fi
+    if [ "$HELP" ]; then
+	_help
+    fi
 }
 _gpg_(){
-	if [ ! "$RECIPIENT" ]; then
-		echo "Please setup first: gxt gpg EMAIL|PUBKEYID"
-		exit 1
+    if [ ! "$RECIPIENT" ]; then
+	echo "Please setup first: gxt gpg EMAIL|PUBKEYID"
+	exit 1
+    fi
+    # hook_open
+    if [ "$1" == "decrypt" ]; then
+	if [ -z "$GPG_TMP" ]; then
+	    GPG_TMP="$(mktemp -u -t .gxt-XXXXXX)"
 	fi
-	# hook_open
-	if [ "$1" == "decrypt" ]; then
-		if [ -z "$GPG_TMP" ]; then
-			GPG_TMP="$(mktemp -u -t .gxt-XXXXXX)"
-		fi
-		if [ -f "$SRC" ]; then
-			gpg --output "$GPG_TMP" --decrypt "$SRC"
-		fi
-		GPG_TEXT="$SRC"
-		SRC="$GPG_TMP"
+	if [ -f "$SRC" ]; then
+	    gpg --output "$GPG_TMP" --decrypt "$SRC"
 	fi
-	# hook_close
-	if [ "$1" == "encrypt" ] && [ -f "$SRC" ]; then
-		gpg --yes --trust-model always --output "$GPG_TEXT" --encrypt --recipient "$RECIPIENT" "$SRC"
-		rm -rf "$SRC"
-		SRC="$GPG_TEXT"
-	fi
+	GPG_TEXT="$SRC"
+	SRC="$GPG_TMP"
+    fi
+    # hook_close
+    if [ "$1" == "encrypt" ] && [ -f "$SRC" ]; then
+	gpg --yes --trust-model always --output "$GPG_TEXT" --encrypt --recipient "$RECIPIENT" "$SRC"
+	rm -rf "$SRC"
+	SRC="$GPG_TEXT"
+    fi
 }
 
 _hook_open(){
-	if [ "$GPG" ]; then
-		_gpg_ "decrypt"
-	fi
+    if [ "$GPG" ]; then
+	_gpg_ "decrypt"
+    fi
 }
 
 _hook_close(){
-	if [ "$GPG" ]; then
-		_gpg_ "encrypt"
-	fi
+    if [ "$GPG" ]; then
+	_gpg_ "encrypt"
+    fi
 }
 
 _init(){
-	if [ -f "$RC" ]; then
-		# shellcheck disable=SC1090
-		. "$RC"
-	else
-		echo 'RECIPIENT='>> "$RC"
-	fi
-	if [ ! -d "$REPO/.git" ]; then
-		git init "$REPO" > /dev/null
-	fi
+    if [ -f "$RC" ]; then
+	# shellcheck disable=SC1090
+	. "$RC"
+    else
+	echo 'RECIPIENT='>> "$RC"
+    fi
+    if [ ! -d "$REPO/.git" ]; then
+	git init "$REPO" > /dev/null
+    fi
 }
 
 _gpg_setup(){
-	if [ ! "$SRC" ]; then
-		echo "gxt gpg EMAIl|PUBKEYID"
-		echo "Example:"
-		echo " gxt gpg txgvnn@gmail.com"
-		exit 1
-	fi
-	if ! which gpg; then
-		echo "Please install gnupg tools first"
-		exit 1
-	fi
-	gpg --search-keys "$SRC"
-	pubkey="$(gpg --list-public-keys "$SRC" | awk '/pub/ {print $2}' | grep  -oE '0[a-zA-Z].*?')"
-	sed -i 's/RECIPIENT=.*/RECIPIENT='"$pubkey"'/g' "$RC"
+    if [ ! "$SRC" ]; then
+	echo "gxt gpg EMAIl|PUBKEYID"
+	echo "Example:"
+	echo " gxt gpg txgvnn@gmail.com"
+	exit 1
+    fi
+    if ! which gpg; then
+	echo "Please install gnupg tools first"
+	exit 1
+    fi
+    gpg --search-keys "$SRC"
+    pubkey="$(gpg --list-public-keys "$SRC" | awk '/pub/ {print $2}' | grep  -oE '0[a-zA-Z].*?')"
+    sed -i 's/RECIPIENT=.*/RECIPIENT='"$pubkey"'/g' "$RC"
 }
 
 _edit(){
-	msg="Update"
-	if [ ! "$SRC" ]; then
-		echo "gxt new NOTE [-g|--gpg]"
-		echo "gxt vi NOTE [-g|--gpg]"
-	fi
+    msg="Update"
+    if [ ! "$SRC" ]; then
+	echo "gxt new NOTE [-g|--gpg]"
+	echo "gxt vi NOTE [-g|--gpg]"
+    fi
 
-	if [ ! -f "$SRC" ]; then
-		if [[ "$SRC" == *[/]* ]]; then
-			dir=${SRC%/*}
-			mkdir -p "$dir"
-		fi
-		msg="Add"
+    if [ ! -f "$SRC" ]; then
+	if [[ "$SRC" == *[/]* ]]; then
+	    dir=${SRC%/*}
+	    mkdir -p "$dir"
 	fi
+	msg="Add"
+    fi
 
-	_hook_open
-	editor "$SRC"
-	_hook_close
+    _hook_open
+    editor "$SRC"
+    _hook_close
 
-	if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
-		git add "$SRC"
-		git commit -m "${msg} ${SRC}" | head -n1
-	fi
+    if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
+	git add "$SRC"
+	git commit -m "${msg} ${SRC}" | head -n1
+    fi
 }
 
 _add(){
-	if [ ! "$SRC" ]; then
-		echo "gxt add <file> NEW-NOTE [-g|--gpg]"
+    if [ ! "$SRC" ]; then
+	echo "gxt add <file> NEW-NOTE [-g|--gpg]"
+	exit 1
+    else
+	if [ -f "$DEST" ]; then
+	    printf "Note has exist. Do you want override that (y/N)? "
+	    read -r override
+	    if [[ "$override" != "y" && "$override" != "Y" ]]; then
 		exit 1
-	else
-		if [ -f "$DEST" ]; then
-			printf "Note has exist. Do you want override that (y/N)? "
-			read -r override
-			if [[ "$override" != "y" && "$override" != "Y" ]]; then
-				exit 1
-			fi
-		fi
-
-		notes=$DEST
-		if [ -z "$notes" ]; then
-			notes=${SRC##*/}
-		fi
-		#if need to create new directory
-		if [[ "$DEST" == *[/]* ]]; then
-			dir=${DEST%/*}
-			mkdir -p "$dir"
-		fi
-
-		if [[ "$SRC" != /* ]]; then
-			SRC="$DIR_WORK/$SRC"
-		fi
-		_hook_open
-		cp "$SRC" "$notes"
-		GPG_TEXT="$notes"
-		_hook_close
-
-		if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
-			git add "$notes"
-			git commit -m "Add file $notes" | head -n1
-		else
-			printf 'Note "%s" was not changed' "$notes"
-		fi
-
+	    fi
 	fi
+
+	notes=$DEST
+	if [ -z "$notes" ]; then
+	    notes=${SRC##*/}
+	fi
+	#if need to create new directory
+	if [[ "$DEST" == *[/]* ]]; then
+	    dir=${DEST%/*}
+	    mkdir -p "$dir"
+	fi
+
+	if [[ "$SRC" != /* ]]; then
+	    SRC="$DIR_WORK/$SRC"
+	fi
+	_hook_open
+	cp "$SRC" "$notes"
+	GPG_TEXT="$notes"
+	_hook_close
+
+	if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
+	    git add "$notes"
+	    git commit -m "Add file $notes" | head -n1
+	else
+	    printf 'Note "%s" was not changed' "$notes"
+	fi
+
+    fi
 }
 
 _view(){
-	if [ ! "$SRC" ];then
-		echo "gxt cat NOTE"
-		echo "gxt less NOTE"
-		echo "gxt more NOTE"
-		exit 1
-	fi
-	_hook_open
-	case "$com" in
-		less)
-			less "$SRC"
-			;;
-		more)
-			more "$SRC"
-			;;
-		*)
-			cat "$SRC"
-			;;
-	esac
-	_hook_close
+    if [ ! "$SRC" ];then
+	echo "gxt cat NOTE"
+	echo "gxt less NOTE"
+	echo "gxt more NOTE"
+	exit 1
+    fi
+    _hook_open
+    case "$com" in
+	less)
+	    less "$SRC"
+	    ;;
+	more)
+	    more "$SRC"
+	    ;;
+	*)
+	    cat "$SRC"
+	    ;;
+    esac
+    _hook_close
 }
 
 _stat(){
-	if [ ! "$SRC" ];then
-		echo "gxt stat NOTE"
-		exit 1
-	fi
-	stat "$2"
+    if [ ! "$SRC" ];then
+	echo "gxt stat NOTE"
+	exit 1
+    fi
+    stat "$2"
 }
 
 _list(){
-	if [ -n "$SRC" ] && [ ! -d "$SRC" ]; then
-		printf '"%s" is not category' "$SRC"
-		exit 1
-	fi
-	echo "# CATEGORIES"
-	find "./$SRC" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
-	echo ""
-	echo "# GLOBAL"
-	find "./$SRC" -mindepth 1 -maxdepth 1 -type f -exec basename {} \;
+    if [ -n "$SRC" ] && [ ! -d "$SRC" ]; then
+	printf '"%s" is not category' "$SRC"
+	exit 1
+    fi
+    echo "# CATEGORIES"
+    find "./$SRC" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed '/\.git/d'
+    echo ""
+    echo "# GLOBAL"
+    find "./$SRC" -mindepth 1 -maxdepth 1 -type f -exec basename {} \;
 }
 
 _search(){
-	if [ ! "$SRC" ]; then
-		echo "gxt find [-c category] [-m|--match] NAME|PATTERN"
-		exit 1
-	fi
-	dir='.'
-	if [ "$CATEGORY" ]; then
-		dir="$CATEGORY"
-	fi
-	if [ "$MATCH" ] ; then
-		find "$dir"  -path ./.git -prune -o -type f -exec grep -n --color=always "$SRC" /dev/null {} + | sed -e 's,\./,,'
-	else
-		find "$dir" -path ./.git -prune -o -type f -printf '%P\0'  | grep -zi --color=always "$SRC" | tr \\0 \\n
-	fi
+    if [ ! "$SRC" ]; then
+	echo "gxt find [-c category] [-m|--match] NAME|PATTERN"
+	exit 1
+    fi
+    dir='.'
+    if [ "$CATEGORY" ]; then
+	dir="$CATEGORY"
+    fi
+    if [ "$MATCH" ] ; then
+	find "$dir"  -path ./.git -prune -o -type f -exec grep -n --color=always "$SRC" /dev/null {} + | sed -e 's,\./,,'
+    else
+	find "$dir" -path ./.git -prune -o -type f -printf '%P\0'  | grep -zi --color=always "$SRC" | tr \\0 \\n
+    fi
 
 }
 
 _log(){
-	if [ ! "$SRC" ]; then
-		git log --graph --decorate --pretty=oneline --abbrev-commit
-	else
-		git  log --graph --decorate --pretty=oneline --abbrev-commit -- "$SRC"
-	fi
+    if [ ! "$SRC" ]; then
+	git log --graph --decorate --pretty=oneline --abbrev-commit
+    else
+	git  log --graph --decorate --pretty=oneline --abbrev-commit -- "$SRC"
+    fi
 }
 
 _share(){
-	if [ ! "$SRC" ]; then
-		echo "gxt share NOTE [-g|--gpg]"
-	else
-		_hook_open
+    if [ ! "$SRC" ]; then
+	echo "gxt share NOTE [-g|--gpg]"
+    else
+	_hook_open
 
-		case "$SHARE" in
-			"TERMBIN")
-				<"$SRC" nc termbin.com 9999 ;;
-			*)
-				curl --upload-file "$SRC" https://transfer.sh
-		esac
+	case "$SHARE" in
+	    "TERMBIN")
+		<"$SRC" nc termbin.com 9999 ;;
+	    *)
+		curl --upload-file "$SRC" https://transfer.sh
+	esac
 
-		_hook_close
-	fi
+	_hook_close
+    fi
 }
 
 _move(){
-	if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
-		echo "gxt mv OLD_NOTE NEW_NOTE"
-	else
-		if [[ "$DEST" == *[/]* ]]; then
-			dir=${DEST%/*}
-			mkdir -p "$REPO/$dir"
-		fi
-		mv "$SRC" "$DEST"
-		if [ -n "$(git status -s | awk '/^ D/')" ]; then
-			git add -u
-			git add "$DEST"
-			git commit -m "Rename $SRC -> $DEST" | head -n1
-		fi
+    if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
+	echo "gxt mv OLD_NOTE NEW_NOTE"
+    else
+	if [[ "$DEST" == *[/]* ]]; then
+	    dir=${DEST%/*}
+	    mkdir -p "$REPO/$dir"
 	fi
+	mv "$SRC" "$DEST"
+	if [ -n "$(git status -s | awk '/^ D/')" ]; then
+	    git add -u
+	    git add "$DEST"
+	    git commit -m "Rename $SRC -> $DEST" | head -n1
+	fi
+    fi
 }
 
 _remove(){
-	if [ "$#" -eq 1 ];then
-		echo "gxt rm NOTE..."
-	else
-		item=""
-		shift
-		for note in "$@"
-		do
-			if [ -f "$note" ]; then
-				rm -vrf "$note"
-				item+="$note "
-			else
-				printf 'Not found %s\n' "$note"
-			fi
-		done
+    if [ "$#" -eq 1 ];then
+	echo "gxt rm NOTE..."
+    else
+	item=""
+	shift
+	for note in "$@"
+	do
+	    if [ -f "$note" ]; then
+		rm -vrf "$note"
+		item+="$note "
+	    else
+		printf 'Not found %s\n' "$note"
+	    fi
+	done
 
-		if [ -n "$(git status -s | awk '/^ D/')" ]; then
-			git add -u
-			git commit -m "Delete $item" | head -n1
-		fi
-
+	if [ -n "$(git status -s | awk '/^ D/')" ]; then
+	    git add -u
+	    git commit -m "Delete $item" | head -n1
 	fi
+
+    fi
 }
 
 _export(){
-	if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
-		echo "gxt export NOTE [PATH] [-g|--gpg]"
-	else
-		path="$DIR_WORK"
-		if [ "$DEST" ]; then
-			path="$DEST"
-		fi
-		if [[ "$DEST" != /* ]]; then
-			path="$DIR_WORK/$3"
-		fi
-
-		_hook_open
-		cp "$SRC" "$path" -i
-		_hook_close
+    if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
+	echo "gxt export NOTE [PATH] [-g|--gpg]"
+    else
+	path="$DIR_WORK"
+	if [ "$DEST" ]; then
+	    path="$DEST"
 	fi
+	if [[ "$DEST" != /* ]]; then
+	    path="$DIR_WORK/$3"
+	fi
+
+	_hook_open
+	cp "$SRC" "$path" -i
+	_hook_close
+    fi
 
 }
 
 _main(){
-	com="$1"
-	SRC="$2"
-	DEST="$3"
-	case "$com" in
-		new|vi|edit|update|nano)
-			_edit "$@"
-			;;
+    com="$1"
+    SRC="$2"
+    DEST="$3"
+    case "$com" in
+	new|vi|edit|update|nano)
+	    _edit "$@"
+	    ;;
 
-		add)
-			_add "$@"
-			;;
+	add)
+	    _add "$@"
+	    ;;
 
-		cat|less|more)
-			_view "$@"
-			;;
+	cat|less|more)
+	    _view "$@"
+	    ;;
 
-		stat)
-			_stat "$@"
-			;;
+	stat)
+	    _stat "$@"
+	    ;;
 
-		list|ls)
-			_list "$@"
-			;;
+	list|ls)
+	    _list "$@"
+	    ;;
 
-		find|search)
-			_search "$@"
-			;;
+	find|search)
+	    _search "$@"
+	    ;;
 
-		export)
-			_export "$@"
-			;;
+	export)
+	    _export "$@"
+	    ;;
 
-		share)
-			_share "$@"
-			;;
+	share)
+	    _share "$@"
+	    ;;
 
-		mv|rename)
-			_move "$@"
-			;;
+	mv|rename)
+	    _move "$@"
+	    ;;
 
-		rm|remove|delete)
-			_remove "$@"
-			;;
+	rm|remove|delete)
+	    _remove "$@"
+	    ;;
 
-		log)
-			_log "$@"
-			;;
+	log)
+	    _log "$@"
+	    ;;
 
-		gpg)
-			_gpg_setup "$@"
-			;;
+	gpg)
+	    _gpg_setup "$@"
+	    ;;
 
-		*)
-			_help
-			;;
-	esac
+	*)
+	    _help
+	    ;;
+    esac
 }
 
 _init

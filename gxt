@@ -18,15 +18,16 @@ _help(){
     echo "Commands are:"
     echo -e "\tnew \tNew or update note |edit|vi|update|"
     echo -e "\tadd \tAdd file to note"
-    echo -e "\tsearch \tsearch note with name or content contain pattern |find|"
-    echo -e "\tcat \tview note |cat|less|more|"
-    echo -e "\tstat \tdisplay note status"
-    echo -e "\tmv \trename note |rename|"
-    echo -e "\trm \tremove notes |rm|delete|"
-    echo -e "\texport \texport note to file"
-    echo -e "\tshare \tshare note vi termbin.com"
+    echo -e "\tsearch \tSearch note with name or content contain pattern |find|"
+    echo -e "\tcat \tView note |cat|less|more|"
+    echo -e "\tstat \tDisplay note status"
+    echo -e "\tmv \tRename note |rename|"
+    echo -e "\trm \tRemove notes |rm|delete|"
+    echo -e "\texport \tExport note to file"
+    echo -e "\tshare \tShare note vi termbin.com"
     echo -e "\tlist \tList all notes |ls|"
-    echo -e "\tlog \tlog all or only note"
+    echo -e "\tlog \tLog all or only note"
+    echo -e "\tgit \tUse power of git"
     echo ""
     echo "Options are:"
     echo -e "\t-g,	--gpg		Encrypt notes with GnuPG"
@@ -73,6 +74,7 @@ _bootstrap(){
 	_help
     fi
 }
+
 _gpg_(){
     if [ ! "$RECIPIENT" ]; then
 	echo "Please setup first: gxt gpg EMAIL|PUBKEYID"
@@ -344,7 +346,11 @@ _export(){
 	cp "$SRC" "$path" -i
 	_hook_close
     fi
+}
 
+_git(){
+    shift
+    git "$@"
 }
 
 _main(){
@@ -352,7 +358,7 @@ _main(){
     SRC="$2"
     DEST="$3"
     case "$com" in
-	new|vi|edit|update|nano)
+	new|vi|edit|update)
 	    _edit "$@"
 	    ;;
 
@@ -398,6 +404,10 @@ _main(){
 
 	gpg)
 	    _gpg_setup "$@"
+	    ;;
+
+	git)
+	    _git "$@"
 	    ;;
 
 	*)

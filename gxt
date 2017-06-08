@@ -130,7 +130,7 @@ _gpg_setup(){
 	echo " gxt gpg txgvnn@gmail.com"
 	exit 1
     fi
-    if ! which gpg; then
+    if ! which gpg>/dev/null; then
 	echo "Please install gnupg tools first"
 	exit 1
     fi
@@ -155,7 +155,11 @@ _edit(){
     fi
 
     _hook_open
-    editor "$SRC"
+    if [ "$com" != "em" ]; then
+	editor "$SRC"
+    else
+	emacs -nw "$SRC"
+    fi
     _hook_close
 
     if [ -n "$(git status -s | awk '/??/ || /M/')" ]; then
@@ -252,6 +256,7 @@ _search(){
 	echo "gxt find [-c category] [-m|--match] NAME|PATTERN"
 	exit 1
     fi
+    SRC=$(echo ${SRC}|sed  's/[- /]/./g')
     dir='.'
     if [ "$CATEGORY" ]; then
 	dir="$CATEGORY"
@@ -358,7 +363,7 @@ _main(){
     SRC="$2"
     DEST="$3"
     case "$com" in
-	new|vi|edit|update)
+	new|vi|em|edit|update)
 	    _edit "$@"
 	    ;;
 

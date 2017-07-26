@@ -1,8 +1,7 @@
 #!/bin/bash
 # Giap Tran <txgvnn@gmail.com>
 # github.com/TxGVNN/gxt
-
-REPO="$HOME/.gxt"
+GXTDIR=${GXTDIR:-"$HOME/.gxt"}
 RC="$HOME/.gxtrc"
 DIR_WORK=$(pwd -P)
 
@@ -118,8 +117,8 @@ _init(){
     else
 	echo 'RECIPIENT='>> "$RC"
     fi
-    if [ ! -d "$REPO/.git" ]; then
-	git init "$REPO" > /dev/null
+    if [ ! -d "$GXTDIR/.git" ]; then
+	git init "$GXTDIR" > /dev/null
     fi
 }
 
@@ -300,7 +299,7 @@ _move(){
     else
 	if [[ "$DEST" == *[/]* ]]; then
 	    dir=${DEST%/*}
-	    mkdir -p "$REPO/$dir"
+	    mkdir -p "$GXTDIR/$dir"
 	fi
 	mv "$SRC" "$DEST"
 	if [ -n "$(git status -s | awk '/^ D/')" ]; then
@@ -425,7 +424,7 @@ _init
 
 _bootstrap "$@"
 
-cd "$REPO" || exit 1
+cd "$GXTDIR" || exit 1
 
 #shellcheck disable=2086
 _main $commands

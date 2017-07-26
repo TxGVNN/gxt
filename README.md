@@ -10,9 +10,12 @@ The version 2.0 now support encrypted note with [GNU Privacy Guard](https://www.
 [![asciicast](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb.png)](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb)
 
 ## How to install?
+
 ```
 sudo make
 ```
+Default, the notes will store on ~/.gxt. But you can update by `export GXTDIR=new-path` and put `.bashrc` if you want set it is default.
+
 ## How to use?
 
 - Add new notes or update notes
@@ -79,6 +82,7 @@ gxt log [NOTE]
 ## Changelog
 - master (v2.0)
 ```
+- Can use GXTDIR var to set default folder
 - Support encrypted node by using GNUPG
 - Improved processing opts
 - Merge _new to edit function

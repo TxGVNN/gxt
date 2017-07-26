@@ -3,7 +3,7 @@
 # Giap Tran <txgvnn@gmail.com>
 # github.com/TxGVNN/gxt
 
-REPO=$HOME/.gxt
+GXTDIR=${GXTDIR:-"$HOME/.gxt"}
 
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -19,7 +19,7 @@ _gxt(){
     if [ $COMP_CWORD == 2 ]; then
         case "$prev" in
             "vi"|"cat"|"more"|"less"|"stat"|"rm"|"delete"|"log"|"share"|"mv"|"export")
-                local box_list=$(find "$REPO/"  -path "*.git" -prune  -o -type f  -print | sed 's,'"$REPO/"',,g')
+                local box_list=$(find "$GXTDIR/"  -path "*.git" -prune  -o -type f  -print | sed 's,'"$GXTDIR/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
                 ;;
@@ -31,7 +31,7 @@ _gxt(){
                 ;;
 
             "list"|"ls")
-                local box_list=$(find $REPO  -path "*.git" -prune  -o -type d  -print | sed 's,'"$REPO/"',,g')
+                local box_list=$(find $GXTDIR  -path "*.git" -prune  -o -type d  -print | sed 's,'"$GXTDIR/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0
                 ;;

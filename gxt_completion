@@ -18,7 +18,7 @@ _gxt(){
 
     if [ $COMP_CWORD == 2 ]; then
         case "$prev" in
-            "vi"|"cat"|"more"|"less"|"stat"|"rm"|"delete"|"log"|"share"|"mv"|"export")
+            "vi"|"em"|"cat"|"more"|"less"|"stat"|"rm"|"delete"|"log"|"share"|"mv"|"export")
                 local box_list=$(find "$GXTDIR/"  -path "*.git" -prune  -o -type f  -print | sed 's,'"$GXTDIR/"',,g')
                 COMPREPLY=($(compgen -W "${box_list}" -- ${cur}))
                 return 0

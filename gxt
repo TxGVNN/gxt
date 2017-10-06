@@ -261,7 +261,7 @@ _search(){
 	dir="$CATEGORY"
     fi
     if [ "$MATCH" ] ; then
-	find "$dir"  -path ./.git -prune -o -type f -exec grep -n --color=always "$SRC" /dev/null {} + | sed -e 's,\./,,'
+	find "$dir"  -path ./.git -prune -o -type f -exec grep -ni --color=always "$SRC" /dev/null {} + | sed -e 's,\./,,'
     else
 	find "$dir" -path ./.git -prune -o -type f -printf '%P\0'  | grep -zi --color=always "$SRC" | tr \\0 \\n
     fi

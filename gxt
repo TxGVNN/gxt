@@ -77,7 +77,7 @@ _gpg_encrypt(){
     INPUT="$1"
     OUTPUT="$2"
     if [ -z "$OUTPUT" ]; then
-        $OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
+        OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
     fi
     gpg --yes --trust-model always --output "$OUTPUT" --encrypt --recipient "$RECIPIENT" "$INPUT"
 }
@@ -86,7 +86,7 @@ _gpg_decrypt(){
     INPUT="$1"
     OUTPUT="$2"
     if [ -z "$OUTPUT" ]; then
-        $OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
+        OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
     fi
     gpg --output "$OUTPUT" --decrypt "$INPUT"
 }
@@ -187,7 +187,6 @@ _add(){
         fi
 
         cp "$SRC" "$notes"
-        GPG_TEXT="$notes"
 
         if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
             git add "$notes"

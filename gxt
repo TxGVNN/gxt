@@ -254,7 +254,6 @@ _search(){
 	echo "gxt find [-c category] [-m|--match] NAME|PATTERN"
 	exit 1
     fi
-    SRC=$(echo "${SRC}"|sed  's/[- /]/./g')
     dir='.'
     if [ "$CATEGORY" ]; then
 	dir="$CATEGORY"
@@ -420,9 +419,9 @@ _main(){
 }
 
 _init
-
-_bootstrap "$@"
-
+IFS=$'\n'
+# shellcheck disable=SC2046
+_bootstrap $(printf "%q\n" "$@")
 cd "$GXTDIR" || exit 1
 
 #shellcheck disable=2086

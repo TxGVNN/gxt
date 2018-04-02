@@ -7,7 +7,7 @@ DIR_WORK=$(pwd -P)
 _version(){
     echo -e 'What is this? \tgxt "Xnote Git" 2.0'
 }
-set -x
+
 _help(){
     _version
     echo ""
@@ -73,40 +73,22 @@ _bootstrap(){
     fi
 }
 
-_gpg_(){
-    if [ ! "$RECIPIENT" ]; then
-        echo "Please setup first: gxt gpg EMAIL|PUBKEYID"
-        exit 1
+_gpg_encrypt(){
+    INPUT="$1"
+    OUTPUT="$2"
+    if [ -z "$OUTPUT" ]; then
+        $OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
     fi
-    # hook_open
-    if [ "$1" == "decrypt" ]; then
-        if [ -z "$GPG_TMP" ]; then
-            GPG_TMP="$(mktemp -u -t .gxt-XXXXXX)"
-        fi
-        if [ -f "$SRC" ]; then
-            gpg --output "$GPG_TMP" --decrypt "$SRC"
-        fi
-        GPG_TEXT="$SRC"
-        SRC="$GPG_TMP"
-    fi
-    # hook_close
-    if [ "$1" == "encrypt" ] && [ -f "$SRC" ]; then
-        gpg --yes --trust-model always --output "$GPG_TEXT" --encrypt --recipient "$RECIPIENT" "$SRC"
-        rm -rf "$SRC"
-        SRC="$GPG_TEXT"
-    fi
+    gpg --yes --trust-model always --output "$OUTPUT" --encrypt --recipient "$RECIPIENT" "$INPUT"
 }
 
-_hook_open(){
-    if [ "$GPG" ]; then
-        _gpg_ "decrypt"
+_gpg_decrypt(){
+    INPUT="$1"
+    OUTPUT="$2"
+    if [ -z "$OUTPUT" ]; then
+        $OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
     fi
-}
-
-_hook_close(){
-    if [ "$GPG" ]; then
-        _gpg_ "encrypt"
-    fi
+    gpg --output "$OUTPUT" --decrypt "$INPUT"
 }
 
 _init(){
@@ -152,13 +134,19 @@ _edit(){
         msg="Add"
     fi
 
-    _hook_open
+    if [ "$GPG" ]; then
+        TMP="$SRC"
+        SRC="$(mktemp -u -t .gxt-XXXXXX)"
+    fi
     if [ "$com" != "em" ]; then
         editor "$SRC"
     else
         emacs -nw "$SRC"
     fi
-    _hook_close
+    if [ "$GPG" ]; then
+        _gpg_encrypt "$SRC" "$TMP"
+        SRC="$TMP"
+    fi
 
     if [ -n "$(git status -s | awk '/\?\?/ || /M/')" ]; then
         git add "$SRC"
@@ -192,10 +180,14 @@ _add(){
         if [[ "$SRC" != /* ]]; then
             SRC="$DIR_WORK/$SRC"
         fi
-        _hook_open
+        if [ "$GPG" ]; then
+            TMP="$(mktemp -u -t .gxt-XXXXXX)"
+            _gpg_encrypt "$SRC" "$TMP"
+            SRC="$TMP"
+        fi
+
         cp "$SRC" "$notes"
         GPG_TEXT="$notes"
-        _hook_close
 
         if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
             git add "$notes"
@@ -214,7 +206,11 @@ _view(){
         echo "gxt more NOTE"
         exit 1
     fi
-    _hook_open
+    if [ "$GPG" ]; then
+        TMP="$(mktemp -u -t .gxt-XXXXXX)"
+        _gpg_decrypt "$SRC" "$TMP"
+        SRC="$TMP"
+    fi
     case "$com" in
         less)
             less "$SRC"
@@ -226,7 +222,6 @@ _view(){
             cat "$SRC"
             ;;
     esac
-    _hook_close
 }
 
 _stat(){
@@ -278,16 +273,17 @@ _share(){
     if [ ! "$SRC" ]; then
         echo "gxt share NOTE [-g|--gpg]"
     else
-        _hook_open
-
+        if [ "$GPG" ]; then
+            TMP="$(mktemp -u -t .gxt-XXXXXX)"
+            _gpg_encrypt "$SRC" "$TMP"
+            SRC="$TMP"
+        fi
         case "$SHARE" in
             "TERMBIN")
                 <"$SRC" nc termbin.com 9999 ;;
             *)
                 curl --upload-file "$SRC" https://transfer.sh
         esac
-
-        _hook_close
     fi
 }
 
@@ -343,10 +339,13 @@ _export(){
         if [[ "$DEST" != /* ]]; then
             path="$DIR_WORK/$3"
         fi
+        if [ "$GPG" ]; then
+            TMP="$(mktemp -u -t .gxt-XXXXXX)"
+            _gpg_encrypt "$SRC" "$TMP"
+            SRC="$TMP"
+        fi
 
-        _hook_open
         cp "$SRC" "$path" -i
-        _hook_close
     fi
 }
 

@@ -135,8 +135,12 @@ _edit(){
     fi
 
     if [ "$GPG" ]; then
+        NEWTEMP="$(mktemp -u -t .gxt-XXXXXX)"
+        if [ -f "$SRC" ]; then
+            _gpg_decrypt "$SRC" "$NEWTEMP"
+        fi
         TMP="$SRC"
-        SRC="$(mktemp -u -t .gxt-XXXXXX)"
+        SRC="$NEWTEMP"
     fi
     if [ "$com" != "em" ]; then
         editor "$SRC"

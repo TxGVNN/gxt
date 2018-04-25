@@ -52,17 +52,18 @@ gxt find  [-c category] [-m|--match] NAME|PATTERN
 - Export note to file 
 ```
 gxt export NOTE [PATH] [-g|--gpg]
-
 ```
 
 - Share notes via [transfer.sh](transfer.sh)
 ```
 gxt share NOTE [-g|--gpg] [--termbin]
 ```
+
 - Display notes status
 ```
 gxt stat NOTE
 ```
+
 - Rename notes
 ```
 gxt mv OLD_NOTE NEW_NOTE
@@ -88,6 +89,7 @@ gxt log [NOTE]
 - Merge _new to edit function
 - Share via transfer.sh, termbin.com
 ```
+
 - v1.0
 ```
 - new
@@ -100,4 +102,3 @@ gxt log [NOTE]
 - search
 - stat
 ```
-

@@ -4,6 +4,11 @@
 GXTDIR=${GXTDIR:-"$HOME/.gxt"}
 RC="$HOME/.gxtrc"
 DIR_WORK=$(pwd -P)
+
+if [ "${DEBUG:-0}" -eq 1 ]; then
+    set -x
+fi
+
 _version(){
     echo -e 'What is this? \tgxt "Xnote Git" 2.0'
 }

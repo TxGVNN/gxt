@@ -7,7 +7,10 @@ Inspiration from the written notes is usually my days with git. It's very conven
 You can use: new, find, view, share, log,... and many functions from the power of git.
 
 The version 2.0 now support encrypted note with [GNU Privacy Guard](https://www.gnupg.org)
-[![asciicast](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb.png)](https://asciinema.org/a/4hovdgyvsja9104o0dlx0cjsb)
+
+<p align="center">
+    <img src="https://cdn.rawgit.com/txgvnn/gxt/master/example.svg">
+</p>
 
 ## How to install?
 

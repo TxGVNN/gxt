@@ -168,44 +168,43 @@ _add(){
     if [ ! "$SRC" ]; then
         echo "gxt add <file> NEW-NOTE [-g|--gpg]"
         exit 1
-    else
-        if [ -f "$DEST" ]; then
-            printf "Note has exist. Do you want override that (y/N)? "
-            read -r override
-            if [[ "$override" != "y" && "$override" != "Y" ]]; then
-                exit 1
-            fi
-        fi
-
-        notes=$DEST
-        if [ -z "$notes" ]; then
-            notes=${SRC##*/}
-        fi
-        #if need to create new directory
-        if [[ "$DEST" == *[/]* ]]; then
-            dir=${DEST%/*}
-            mkdir -p "$dir"
-        fi
-
-        if [[ "$SRC" != /* ]]; then
-            SRC="$DIR_WORK/$SRC"
-        fi
-        if [ "$GPG" ]; then
-            TMP="$(mktemp -u -t .gxt-XXXXXX)"
-            _gpg_encrypt "$SRC" "$TMP"
-            SRC="$TMP"
-        fi
-
-        cp "$SRC" "$notes"
-
-        if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
-            git add "$notes"
-            git commit -m "Add file $notes" | head -n1
-        else
-            printf 'Note "%s" was not changed' "$notes"
-        fi
-
     fi
+    if [ -f "$DEST" ]; then
+        printf "Note has exist. Do you want override that (y/N)? "
+        read -r override
+        if [[ "$override" != "y" && "$override" != "Y" ]]; then
+            exit 1
+        fi
+    fi
+
+    notes=$DEST
+    if [ -z "$notes" ]; then
+        notes=${SRC##*/}
+    fi
+    #if need to create new directory
+    if [[ "$DEST" == *[/]* ]]; then
+        dir=${DEST%/*}
+        mkdir -p "$dir"
+    fi
+
+    if [[ "$SRC" != /* ]]; then
+        SRC="$DIR_WORK/$SRC"
+    fi
+    if [ "$GPG" ]; then
+        TMP="$(mktemp -u -t .gxt-XXXXXX)"
+        _gpg_encrypt "$SRC" "$TMP"
+        SRC="$TMP"
+    fi
+
+    cp "$SRC" "$notes"
+
+    if [ -n "$(git status -s | awk '/^\?\?/ || /^ M/')" ]; then
+        git add "$notes"
+        git commit -m "Add file $notes" | head -n1
+    else
+        printf 'Note "%s" was not changed' "$notes"
+    fi
+
 }
 
 _view(){
@@ -281,81 +280,85 @@ _log(){
 _share(){
     if [ ! "$SRC" ]; then
         echo "gxt share NOTE [-g|--gpg]"
-    else
-        if [ "$GPG" ]; then
-            TMP="$(mktemp -u -t .gxt-XXXXXX)"
-            _gpg_encrypt "$SRC" "$TMP"
-            SRC="$TMP"
-        fi
-        case "$SHARE" in
-            "TERMBIN")
-                <"$SRC" nc termbin.com 9999 ;;
-            *)
-                curl --upload-file "$SRC" https://transfer.sh
-        esac
+        exit 1
     fi
+    if [ "$GPG" ]; then
+        TMP="$(mktemp -u -t .gxt-XXXXXX)"
+        _gpg_encrypt "$SRC" "$TMP"
+        SRC="$TMP"
+    fi
+    case "$SHARE" in
+        "TERMBIN")
+            <"$SRC" nc termbin.com 9999 ;;
+        *)
+            curl --upload-file "$SRC" https://transfer.sh
+    esac
+
 }
 
 _move(){
     if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
         echo "gxt mv OLD_NOTE NEW_NOTE"
-    else
-        if [[ "$DEST" == *[/]* ]]; then
-            dir=${DEST%/*}
-            mkdir -p "$GXTDIR/$dir"
-        fi
-        mv "$SRC" "$DEST"
-        if [ -n "$(git status -s | awk '/^ D/')" ]; then
-            git add -u
-            git add "$DEST"
-            git commit -m "Rename $SRC -> $DEST" | head -n1
-        fi
+        exit 1
     fi
+    if [[ "$DEST" == *[/]* ]]; then
+        dir=${DEST%/*}
+        mkdir -p "$GXTDIR/$dir"
+    fi
+    mv "$SRC" "$DEST"
+    if [ -n "$(git status -s | awk '/^ D/')" ]; then
+        git add -u
+        git add "$DEST"
+        git commit -m "Rename $SRC -> $DEST" | head -n1
+    fi
+
 }
 
 _remove(){
     if [ "$#" -eq 1 ];then
         echo "gxt rm NOTE..."
-    else
-        item=""
-        shift
-        for note in "$@"
-        do
-            if [ -f "$note" ]; then
-                rm -vrf "$note"
-                item+="$note "
-            else
-                printf 'Not found %s\n' "$note"
-            fi
-        done
-
-        if [ -n "$(git status -s | awk '/^ D/')" ]; then
-            git add -u
-            git commit -m "Delete $item" | head -n1
-        fi
-
+        exit 1
     fi
+    item=""
+    shift
+    for note in "$@"
+    do
+        if [ -f "$note" ]; then
+            rm -vrf "$note"
+            item+="$note "
+        else
+            printf 'Not found %s\n' "$note"
+        fi
+    done
+
+    if [ -n "$(git status -s | awk '/^ D/')" ]; then
+        git add -u
+        git commit -m "Delete $item" | head -n1
+    fi
+
 }
 
 _export(){
     if [ ! "$SRC" ] && [ ! "$DEST" ] ;then
         echo "gxt export NOTE [PATH] [-g|--gpg]"
-    else
-        path="$DIR_WORK"
-        if [ "$DEST" ]; then
-            path="$DEST"
-        fi
-        if [[ "$DEST" != /* ]]; then
-            path="$DIR_WORK/$3"
-        fi
-        if [ "$GPG" ]; then
-            TMP="$(mktemp -u -t .gxt-XXXXXX)"
-            _gpg_encrypt "$SRC" "$TMP"
-            SRC="$TMP"
-        fi
-
-        cp "$SRC" "$path" -i
+        exit 1
     fi
+
+    path="$DIR_WORK"
+    if [ "$DEST" ]; then
+        path="$DEST"
+    fi
+    if [[ "$DEST" != /* ]]; then
+        path="$DIR_WORK/$3"
+    fi
+    if [ "$GPG" ]; then
+        TMP="$(mktemp -u -t .gxt-XXXXXX)"
+        _gpg_encrypt "$SRC" "$TMP"
+        SRC="$TMP"
+    fi
+
+    cp "$SRC" "$path" -i
+
 }
 
 _git(){

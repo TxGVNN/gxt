@@ -23,10 +23,10 @@ Default, the notes will store on ~/.gxt. But you can update by `export GXTDIR=ne
 
 - Add new notes or update notes
 ```
-gxt vi NOTE [-g|--gpg]
-or
-gxt nano NOTE [-g|--gpg]
 gxt new NOTE [-g|--gpg]
+gxt vi NOTE [-g|--gpg] # vi these is not Vim, just default editor
+#or
+gxt em NOTE [-g|--gpg] # For emacs guys
 ```
 
 - Add new notes from file
@@ -62,7 +62,7 @@ gxt export NOTE [PATH] [-g|--gpg]
 gxt share NOTE [-g|--gpg] [--termbin]
 ```
 
-- Display notes status
+- Display notes stat
 ```
 gxt stat NOTE
 ```
@@ -81,6 +81,11 @@ gxt rm NOTE...
 ```
 # all/special notes
 gxt log [NOTE]
+```
+
+- Using git
+```
+gxt git COMMAND
 ```
 
 ## Changelog

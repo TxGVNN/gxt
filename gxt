@@ -19,7 +19,7 @@ _help(){
     echo "Usage: gxt COMMAND [OPTIONS] [ARGS..]"
     echo ""
     echo "Commands are:"
-    echo -e "\tnew \tNew or update note |edit|vi|update|"
+    echo -e "\tnew \tNew or update note |edit|vi|"
     echo -e "\tadd \tAdd file to note"
     echo -e "\tsearch \tSearch note with name or content contain pattern |find|"
     echo -e "\tcat \tView note |cat|less|more|"
@@ -371,7 +371,7 @@ _main(){
     SRC="$2"
     DEST="$3"
     case "$com" in
-        new|vi|em|edit|update)
+        new|vi|edit|em)
             _edit "$@"
             ;;
 

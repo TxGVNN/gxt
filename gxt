@@ -357,7 +357,7 @@ _export(){
         SRC="$TMP"
     fi
 
-    cp "$SRC" "$path" -i
+    cp "$SRC" "$path" -ia
 
 }
 

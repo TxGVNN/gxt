@@ -2,7 +2,7 @@
 # Giap Tran <txgvnn@gmail.com>
 # github.com/TxGVNN/gxt
 GXTDIR=${GXTDIR:-"$HOME/.gxt"}
-RC="$HOME/.gxtrc"
+RC="$GXTDIR/gxtrc"
 DIR_WORK=$(pwd -P)
 
 if [ "${DEBUG:-0}" -eq 1 ]; then
@@ -80,30 +80,27 @@ _bootstrap(){
 }
 
 _gpg_encrypt(){
-    INPUT="$1"
-    OUTPUT="$2"
-    if [ -z "$OUTPUT" ]; then
-        OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
+    local input="$1"
+    local output="$2"
+    if [ -z "$output" ]; then
+        output="$(mktemp -u -t .gxt-XXXXXX)"
     fi
-    gpg --yes --trust-model always --output "$OUTPUT" --encrypt --recipient "$RECIPIENT" "$INPUT"
+    gpg --yes --trust-model always --output "$output" --encrypt --recipient "$RECIPIENT" "$input"
 }
 
 _gpg_decrypt(){
-    INPUT="$1"
-    OUTPUT="$2"
-    if [ -z "$OUTPUT" ]; then
-        OUTPUT="$(mktemp -u -t .gxt-XXXXXX)"
+    local input="$1"
+    local output="$2"
+    if [ -z "$output" ]; then
+        output="$(mktemp -u -t .gxt-XXXXXX)"
     fi
-    gpg --output "$OUTPUT" --decrypt "$INPUT"
+    gpg --output "$output" --decrypt "$input"
 }
 
 _init(){
-    if [ -f "$RC" ]; then
-        # shellcheck disable=SC1090
-        . "$RC"
-    else
-        echo 'RECIPIENT='>> "$RC"
-    fi
+    # shellcheck disable=SC1090
+    [ -f "$RC" ] && source "$RC"
+
     if [ ! -d "$GXTDIR/.git" ]; then
         git init "$GXTDIR" > /dev/null
     fi
@@ -120,9 +117,8 @@ _gpg_setup(){
         echo "Please install gnupg tools first"
         exit 1
     fi
-    gpg --search-keys "$SRC"
-    pubkey="$(gpg --list-public-keys "$SRC" | awk '/pub/ {print $2}' | grep  -oE '0[a-zA-Z].*?')"
-    sed -i 's/RECIPIENT=.*/RECIPIENT='"$pubkey"'/g' "$RC"
+    echo "RECIPIENT=$SRC" > "$RC"
+    echo "Please import the key by run: gpg --search-keys $SRC"
 }
 
 _edit(){
@@ -427,6 +423,8 @@ _main(){
             _help
             ;;
     esac
+    # remove plaintext
+    [ ! "$GPG" ] || rm /tmp/.gxt* -f
 }
 
 _init

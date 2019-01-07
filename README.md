@@ -17,9 +17,13 @@ The version 2.0 now support encrypted note with [GNU Privacy Guard](https://www.
 ```
 sudo make
 ```
-Default, the notes will store on ~/.gxt. But you can update by `export GXTDIR=new-path` and put `.bashrc` if you want set it is default.
+Default, the notes will store on ~/.gxt. But you can update by `export GXTDIR=/new-path` and put `.bashrc` if you want set it is default.
 
 ## How to use?
+- Setup gpg
+```
+gxt gpg EMAIl|PUBKEYID
+```
 
 - Add new notes or update notes
 ```

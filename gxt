@@ -31,6 +31,7 @@ _help(){
     echo -e "\tlist \tList all notes |ls|"
     echo -e "\tlog \tLog all or only note"
     echo -e "\tgit \tUse power of git"
+    echo -e "\tgpg \tSetup gpg key"
     echo ""
     echo "Options are:"
     echo -e "\t-g,  --gpg       Encrypt notes with GnuPG"

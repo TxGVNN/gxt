@@ -8,7 +8,7 @@ GXTDIR=${GXTDIR:-"$HOME/.gxt"}
 _gxt(){
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    commands="--help --version help new add init list log vi em stat ls rm mv share search export"
+    commands="--help --version help new add init list log vi em stat ls rm mv share search export gpg"
 
     if [ $COMP_CWORD == 1 ]
     then

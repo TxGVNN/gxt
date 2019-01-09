@@ -120,6 +120,8 @@ _gpg_setup(){
     fi
     echo "RECIPIENT=$SRC" > "$RC"
     echo "Please import the key by run: gpg --search-keys $SRC"
+    git add "$RC"
+    git commit -m "Setup gpg key" --quiet >/dev/null
 }
 
 _edit(){
